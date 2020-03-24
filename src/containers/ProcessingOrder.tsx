@@ -3,16 +3,19 @@ import OrderType from "../Types/OrderType";
 import OrderDetailType from "../Types/OrderDetailType"
 import CustomerType from "../Types/CustomerType"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Orders from "../components/Orders";
 import OrderDetail from "../components/OrderDetail"
 import SearchInput from "../components/SearchInput";
 import Suggestions from "../components/Suggestions"
 import styled from "styled-components";
-
-import removeSpecialCharacter from "../common/handleVietnamese";
 import { Container, Row, Col, Form, Button, Badge, Alert } from "react-bootstrap"
 import moneyFormat from "../common/moneyFormat"
+import { Link } from "react-router-dom"
+import DeleteOrder from "../components/Modal/DeleteOrder"
+import MessageModal from "../components/Modal/MessageModal"
+import { withRouter } from "react-router-dom"
+
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -22,18 +25,18 @@ const OrderList = styled.div`
   position: relative;
   height: 100%;
 `;
-let initOrder = [
-    {
-        id: 0,
-        customer: "",
-        createAt: "",
-        updateAt: "",
-        paid: 0,
-        note: "",
-        installment: false,
-        staff: ""
-    }
-];
+// let initOrder = [
+//     {
+//         id: 0,
+//         customer: "",
+//         createAt: "",
+//         updateAt: "",
+//         paid: 0,
+//         note: "",
+//         installment: false,
+//         staff: ""
+//     }
+// ];
 let initOrderDetail = [{
     product: {
         code: "",
@@ -61,21 +64,20 @@ const ProcessOrder: React.FC<{}> = props => {
     const [selectedOrder, setSelectedOrder] = useState<OrderType | undefined>(undefined)
     const [searchResults, setSearchResults] = useState<CustomerType[]>([])
     const [showSearchSuggestions, setShowSearchSuggestions] = useState<boolean>(false)
-    // useEffect(() => {
-
-    //     getOrdersData();
-    // }, []);
-    // const getOrdersData = async () => {
-    //     await axios
-    //         .get("https://stormy-ridge-84291.herokuapp.com/order/")
-    //         .then(response => {
-    //             setOrders(response.data);
-    //             setOrderLoading(false);
-    //             initOrder.length = 0;
-    //             initOrder = response.data;
-    //         })
-    //         .catch(error => console.log(error))
-    // };
+    const [monthlyInvoice, setMonthlyInvoice] = useState<OrderType[]>([])
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [showMessageModal, setShowMessageModal] = useState<boolean>(false)
+    const getOrdersData = async () => {
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/order/")
+            .then(response => {
+                setOrders(response.data);
+                setOrderLoading(false);
+                // initOrder.length = 0;
+                // initOrder = response.data;
+            })
+            .catch(error => console.log(error))
+    };
 
     const handleSearchCustomer = (value: string) => {
         // let filteredData = [...initOrder];
@@ -104,7 +106,6 @@ const ProcessOrder: React.FC<{}> = props => {
                 getCustomers();
             }
         }
-
     };
     const processOrderHeaderClick = (value: string) => {
         let sortedData: OrderType[]
@@ -129,6 +130,7 @@ const ProcessOrder: React.FC<{}> = props => {
         setOrderDetail(sortedData)
     }
     const processItemClick = (item: OrderType) => {
+
         const getOrderDetail = async () => {
             await axios
                 .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + item.id.toString() + "/items")
@@ -137,11 +139,17 @@ const ProcessOrder: React.FC<{}> = props => {
                     initOrderDetail = response.data;
                     setOrderDetail([])
                     setOrderDetail(response.data);
+                    console.log(response.data)
                 })
                 .catch(error => console.log(error))
         };
-        getOrderDetail();
-        setSelectedOrder(item)
+        //Add to Monthly Invoice List if double click if item is pre-selected
+        if (item.id === selectedOrder?.id) {
+            addOrderToInvoiceList()
+        } else {
+            getOrderDetail();
+            setSelectedOrder(item)
+        }
     }
     const handleSetCredit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -155,19 +163,16 @@ const ProcessOrder: React.FC<{}> = props => {
     }
 
     const handlePayOrder = () => {
-
         if (selectedOrder !== undefined) {
             let amount = 0;
             const totalPrice = calculateTotalPrice()
             const payForOrder = async () => {
                 await axios.put("https://stormy-ridge-84291.herokuapp.com/order/amount/?id=" + selectedOrder.id + "&amount=" + amount)
                     .then(response => {
-
                         processSuggestionSelect(selectedCustomer);
                     })
                     .catch(error => console.log(error))
             }
-
             if (selectedOrder.paid < totalPrice) {
                 if (remainingCredit > (totalPrice - selectedOrder.paid)) {
                     amount = totalPrice - selectedOrder.paid;
@@ -180,10 +185,7 @@ const ProcessOrder: React.FC<{}> = props => {
                     payForOrder();
                 }
             }
-
-
         }
-
     }
     function calculateTotalPrice(): number {
         let price = 0;
@@ -193,6 +195,7 @@ const ProcessOrder: React.FC<{}> = props => {
         return price
     }
     const processSuggestionSelect = (item: CustomerType) => {
+        setSelectedOrder(undefined)
         selectedCustomer = item;
         setOrderDetail([])
         setShowSearchSuggestions(false)
@@ -203,27 +206,70 @@ const ProcessOrder: React.FC<{}> = props => {
                 .then(response => {
                     setOrders(response.data);
                     setOrderLoading(false);
-                    initOrder.length = 0;
-                    initOrder = response.data;
+                    // initOrder.length = 0;
+                    // initOrder = response.data;
                 })
                 .catch(error => console.log(error))
         };
         getCustomerOrdersData();
     }
+    const addOrderToInvoiceList = () => {
+        if (monthlyInvoice.some(order => order.id === selectedOrder?.id)) {
+            return;
+        }
+        let monthlyList = [...monthlyInvoice, selectedOrder as OrderType];
+        setMonthlyInvoice(monthlyList)
 
+    }
+    const processDeleteModal = () => {
+        if (selectedOrder !== undefined) {
+            const deleteOrder = async () => {
+                await axios
+                    .delete("https://stormy-ridge-84291.herokuapp.com/order/" + selectedOrder.id)
+                    .then(response => {
+                        console.log(response.data)
+                        setShowModal(false);
+                        setOrders([]);
+                        setOrderDetail([]);
+                        setShowMessageModal(true)
+                    })
+                    .catch(error => console.log(error))
+            };
+            deleteOrder();
+        }
+    }
     return (
         <div>
-
             <Container style={{ margin: "0px" }}>
                 <Row style={{ height: "50%" }}>
                     <Col>
                         <OrderList>
                             <div style={{ margin: "1%" }}>
-                                <SearchInput
-                                    holderText={"Search order by customer name ..."}
-                                    handleSearchChange={handleSearchCustomer}
+                                <Row>
+                                    <Col lg="7">
+                                        <SearchInput
+                                            holderText={"Search order by customer name ..."}
+                                            handleSearchChange={handleSearchCustomer}
+                                        /></Col>
+                                    <Col style={{ paddingRight: "0px" }}><Button onClick={() => {
+                                        setOrderLoading(true)
+                                        getOrdersData();
+                                    }}>All Orders</Button></Col>
+                                </Row>
+                                <Suggestions data={searchResults}
+                                    showSuggestions={showSearchSuggestions}
+                                    handleSelectedItem={processSuggestionSelect} />
+                                <DeleteOrder
+                                    handleClose={() => { setShowModal(false) }}
+                                    handleDelete={processDeleteModal}
+                                    show={showModal}
+                                    message={selectedOrder as OrderType}
                                 />
-                                <Suggestions data={searchResults} showSuggestions={showSearchSuggestions} handleSelectedItem={processSuggestionSelect} />
+                                <MessageModal
+                                    title={"Delete Order"}
+                                    message={"Order has been deleted."}
+                                    handleClose={() => { setShowMessageModal(false) }}
+                                    show={showMessageModal} />
                             </div>
                             <Orders
                                 data={orders}
@@ -232,6 +278,39 @@ const ProcessOrder: React.FC<{}> = props => {
                                 handleHeaderClick={processOrderHeaderClick}
                                 handleSelectedItem={processItemClick}
                             ></Orders>
+
+                            <Row>
+                                <Col lg="7">
+                                    <Button style={{ marginLeft: "5px", marginTop: "10px", width: "80%" }}
+                                        className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                        onClick={() => { }}>Monthly Invoice List
+                                <Badge pill variant="warning"
+                                            style={{ marginLeft: "5px" }}>
+                                            {monthlyInvoice.length}
+                                        </Badge>
+                                    </Button>
+                                </Col>
+                                <Col lg="auto">
+                                    <Link to={"/updateorder/" + selectedOrder?.id} >
+                                        <Button
+                                            className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                            style={{ marginTop: "10px", width: "100%" }}>Update Order</Button>
+                                    </Link>
+
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col lg="7">
+                                    <Button
+                                        style={{ marginTop: "10px", marginLeft: "5px", width: "80%" }}
+                                        variant="danger"
+                                        className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                        onClick={() => {
+                                            setShowModal(true)
+                                        }}
+                                    >Delete Order</Button>
+                                </Col>
+                            </Row>
                         </OrderList>
                     </Col>
                     <Col style={{ marginTop: "65px" }}><OrderDetail data={orderDetail}
@@ -240,7 +319,6 @@ const ProcessOrder: React.FC<{}> = props => {
                         handleSelectedItem={() => { }}
                         handleHeaderClick={processOrderDetailHeaderClick}></OrderDetail>
                         <Row style={{ marginLeft: "2px" }}>
-
                             <Alert variant="success" style={{ width: "25vh", marginTop: "10px" }}>
                                 <Col style={{ paddingLeft: "0px" }}>
                                     <Form onSubmit={handleSetCredit}>
@@ -253,7 +331,8 @@ const ProcessOrder: React.FC<{}> = props => {
                                                 style={{ width: "20vh" }}
                                             />
                                         </Form.Group>
-                                        <Button variant="primary" type="submit" style={{ width: "20vh", marginBottom: "5px" }} className={(Number(formRef.current?.value) === 0) ? "disabled" : "active"}>Set credit</Button>
+                                        <Button variant="primary" type="submit" style={{ width: "20vh", marginBottom: "5px" }}
+                                            className={((formRef.current?.value.toString()) === "") ? "disabled" : "active"}>Set credit</Button>
                                     </Form>
                                 </Col>
                                 <Col style={{ paddingLeft: "0px" }}>
@@ -272,11 +351,9 @@ const ProcessOrder: React.FC<{}> = props => {
                             </Alert>
                         </Row>
                     </Col>
-
                 </Row>
             </Container >
-
         </div >
     );
 };
-export default ProcessOrder;
+export default withRouter(ProcessOrder);

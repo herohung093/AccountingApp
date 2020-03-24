@@ -9,4 +9,5 @@ export default interface OrderLineType {
     price: number;
     discount: number;
     totalPrice: number;
+    id: number;
 }

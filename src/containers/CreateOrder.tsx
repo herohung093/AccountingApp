@@ -7,9 +7,13 @@ import OrderDetail, { Data } from "../components/OrderDetail"
 import Inventory from "../components/Inventory"
 import Customer from "../components/Customer"
 import SearchInput from "../components/SearchInput";
-import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Alert, Card } from "react-bootstrap";
 import removeSpecialCharacter from "../common/handleVietnamese";
+import { withRouter, RouteComponentProps } from "react-router-dom"
+import OrderType from "../Types/OrderType"
 import axios from "axios"
+import OrderDetailType from "../Types/OrderDetailType"
+
 let initCustomer = [{
     id: 0,
     name: "",
@@ -37,7 +41,7 @@ const initOrderNote = {
     paid: 0,
     note: ""
 }
-let initOrderLine = [{
+const initOrderLine = [{
     product: {
         code: "",
         name: "",
@@ -47,7 +51,8 @@ let initOrderLine = [{
     quantity: 0,
     price: 0,
     discount: 0,
-    totalPrice: 0
+    totalPrice: 0,
+    id: 0,
 }];
 
 interface AddingItemType {
@@ -59,12 +64,16 @@ interface OrderNoteType {
     paid: string | number;
     note: string;
 }
+let routeParameter: routeParam;
+let orderLineId = 1;
+
+type routeParam = { id: number; }
 let errorMessage = ""
 const inventoryHeaders = ["Product", "Stock"]
 const customerHeaders = ["Name"]
 const orderLineHeaders = ["Product", "Quantity", "Price", "Discount", "Total Price"]
-const CreateOrder: React.FC<{}> = props => {
-    const [inventory, setInventory] = useState<InventoryType[]>(initIventory);
+const CreateOrder: React.FC<RouteComponentProps> = props => {
+    const [inventory, setInventory] = useState<InventoryType[]>([]);
     const [customers, setCustomers] = useState<CustomerType[]>(initCustomer);
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
     const [revertCustomer, setRevertCustomer] = useState<boolean>(false);
@@ -78,9 +87,22 @@ const CreateOrder: React.FC<{}> = props => {
     const [stringInputs, setStringInputs] = useState<AddingItemType>(initAddingItem);
     const [orderNoteInputs, setOrderNoteInputs] = useState<OrderNoteType>(initOrderNote)
     const [isCreateSuccess, setCreateSuccess] = useState<boolean | undefined>(undefined)
+    const [updateOrderNumber, setUpdateOrderNumber] = useState<number>(-1)
+    const [updateOrder, setUpdateOrder] = useState<OrderType | undefined>(undefined);
     useEffect(() => {
-        const getData = async () => {
 
+
+        if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
+            routeParameter = props.match.params as routeParam
+            setUpdateOrderNumber(routeParameter.id)
+            getUpdateOrderDetai(routeParameter.id)
+
+
+
+            setOrderNoteInputs(initOrderNote);
+        }
+
+        const getData = async () => {
             await axios
                 .get("https://stormy-ridge-84291.herokuapp.com/customer/")
                 .then(response => {
@@ -105,7 +127,32 @@ const CreateOrder: React.FC<{}> = props => {
             })
             .catch(error => console.log(error))
     }
+    const getUpdateOrderDetai = (id: number) => {
+        const getOrder = async () => {
+            await axios
+                .get<OrderType>("https://stormy-ridge-84291.herokuapp.com/order/" + id)
+                .then(response => {
+                    setUpdateOrder(response.data);
+                    initOrderNote.paid = response.data.paid
+                    initOrderNote.note = response.data.note;
+                    setOrderNoteInputs(initOrderNote)
+                })
+                .catch(error => console.log(error))
+        };
 
+        const getOrderDetail = async () => {
+            await axios
+                .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + id + "/items")
+                .then(response => {
+                    setOrderItems([...response.data, initOrderLine[0]]);
+                    // initOrderLine.length = 0;
+                    // initOrderLine = response.data;
+                })
+                .catch(error => console.log(error))
+        };
+        getOrder()
+        getOrderDetail();
+    }
     const handleSearchProduct = (value: string) => {
         let filteredData = [...initIventory];
         filteredData.length = 0;
@@ -183,7 +230,9 @@ const CreateOrder: React.FC<{}> = props => {
         setSelectedInventoryItem(code)
     }
     const handleAddItem = (e: React.FormEvent) => {
+
         e.preventDefault();
+
         const totalPrice = (Number(stringInputs.price) * Number(stringInputs.quantity)) * (100 - Number(stringInputs.discount)) / 100
         if (selectedInventoryItem !== undefined) {
             orderItems.forEach(item => {
@@ -196,15 +245,13 @@ const CreateOrder: React.FC<{}> = props => {
                         quantity: Number(stringInputs.quantity),
                         price: Number(stringInputs.price),
                         discount: Number(stringInputs.discount),
-                        totalPrice: totalPrice
+                        totalPrice: totalPrice,
+                        id: ++orderLineId
                     }])
                     setItemExist(false)
                 }
 
             })
-
-
-
         }
 
     }
@@ -242,37 +289,59 @@ const CreateOrder: React.FC<{}> = props => {
             price: number;
             discount: number;
         }
+
         let sentOrderLines = orderItems.map(item => {
-            const value: OrderLine =
+            const value =
             {
                 product: { code: item.product.code, name: "", price: 0, unit: "" },
-                quantity: Number(stringInputs.quantity),
-                price: Number(stringInputs.price),
-                discount: Number(stringInputs.discount),
+                quantity: Number(item.quantity),
+                price: Number(item.price),
+                discount: Number(item.discount),
+                id: ++orderLineId
 
             }
+
             return value;
         })
         let sentData = (sentOrderLines.filter(item => {
             return item.product.code !== ""
         }))
-        let newOrder = { customer: selectedCustomer, staff: "Mai Thi Vu", orderLines: sentData, paid: orderNoteInputs.paid, note: orderNoteInputs.note, installment: false }
+        let newOrder: any;
+        if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
+            newOrder = { customer: selectedCustomer, staff: "Mai Thi Vu", orderLines: sentData, paid: orderNoteInputs.paid, note: orderNoteInputs.note, installment: false, id: updateOrder?.id }
+            sendUpdateOrderData(newOrder)
+            console.log(sentData)
+        } else {
+            newOrder = { customer: selectedCustomer, staff: "Mai Thi Vu", orderLines: sentData, paid: orderNoteInputs.paid, note: orderNoteInputs.note, installment: false }
+            sendNewOrderData(newOrder);
+            console.log("create")
+        }
 
-        const sendData = async () => {
-            await axios
-                .post("https://stormy-ridge-84291.herokuapp.com/order/", newOrder)
-                .then(response => {
-                    if (response.status === 200) {
-                        setCreateSuccess(true)
-                        loadInventoryData();
-                    } else setCreateSuccess(false)
-                })
-                .catch(error => errorMessage = error)
-
-        };
-        sendData();
     }
+    const sendNewOrderData = async (order: any) => {
+        await axios
+            .post("https://stormy-ridge-84291.herokuapp.com/order/", order)
+            .then(response => {
+                if (response.status === 200) {
+                    setCreateSuccess(true)
+                    loadInventoryData();
+                } else setCreateSuccess(false)
+            })
+            .catch(error => errorMessage = error)
 
+    };
+    const sendUpdateOrderData = async (order: any) => {
+        await axios
+            .put("https://stormy-ridge-84291.herokuapp.com/order/", order)
+            .then(response => {
+                if (response.status === 200) {
+                    setCreateSuccess(true)
+                    loadInventoryData();
+                } else setCreateSuccess(false)
+            })
+            .catch(error => errorMessage = error)
+
+    };
     const processServerResponse = () => {
         if (isCreateSuccess) {
             return <Alert variant="success" style={{ width: "20vh", marginTop: "5px" }}>Order has been created</Alert>
@@ -283,7 +352,9 @@ const CreateOrder: React.FC<{}> = props => {
             return <Alert variant="danger" style={{ width: "20vh", marginTop: "5px" }}>{errorMessage}</Alert>
         }
     }
-
+    const handleUpdateOrder = () => {
+        handleCreateOrder()
+    }
     return (
         <Container style={{ margin: "1vh" }}>
             <Row >
@@ -303,22 +374,28 @@ const CreateOrder: React.FC<{}> = props => {
                             handleHeaderClick={processInventoryHeaderClick}
                             handleSelectedItem={handleSelectedIventory}></Inventory>
                     </Row>
-                    <Row>
-                        <div style={{ marginTop: "3px", width: "22vh", marginBottom: "0px" }}>
-                            <SearchInput
-                                holderText={"Search Customer ..."}
-                                handleSearchChange={handleSearchCustomer}
-                            />
-                        </div>
-                    </Row>
-                    <Row>
-                        <Customer data={customers}
-                            headers={customerHeaders}
-                            loading={customerLoading}
-                            handleHeaderClick={processCustomerHeaderClick}
-                            handleSelectedItem={() => { }}
-                            getSelectedCustomerName={handleSelectedCustomer} />
-                    </Row>
+                    {updateOrderNumber !== -1 ?
+                        <Alert style={{ padding: "0px" }}>
+                            {updateOrder === undefined ? <></> : <Card style={{ marginTop: "2vh", alignContent: "center", width: "100%" }}>
+                                <Card.Title>{updateOrder.customer}</Card.Title>
+                                <Card.Text>Order Id: {updateOrder.id}</Card.Text>
+                            </Card>}
+                        </Alert> : <> <Row>
+                            <div style={{ marginTop: "3px", width: "22vh", marginBottom: "0px" }}>
+                                <SearchInput
+                                    holderText={"Search Customer ..."}
+                                    handleSearchChange={handleSearchCustomer}
+                                />
+                            </div>
+                        </Row>
+                            <Row>
+                                <Customer data={customers}
+                                    headers={customerHeaders}
+                                    loading={customerLoading}
+                                    handleHeaderClick={processCustomerHeaderClick}
+                                    handleSelectedItem={() => { }}
+                                    getSelectedCustomerName={handleSelectedCustomer} />
+                            </Row> </>}
                 </Col>
                 <Col xl={3} sm={2} md={2}>
                     <Form onSubmit={handleAddItem}
@@ -356,10 +433,17 @@ const CreateOrder: React.FC<{}> = props => {
                                 value={stringInputs.discount.toString()}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" style={{ width: "20vh", marginBottom: "5px" }} className={(selectedInventoryItem === undefined) ? "disabled" : "active"}>Add to Order</Button>
+                        <Button variant="primary" type="submit"
+                            style={{ width: "20vh", marginBottom: "5px" }}
+                            className={(selectedInventoryItem === undefined) ? "disabled" : "active"}>Add to Order
+                            </Button>
                         {itemExist ? <Alert variant="danger">Product has been added before</Alert> : <></>}
                     </Form>
-                    <Button variant="danger" style={{ width: "20vh", marginBottom: "5px" }} onClick={handleDeleteItem} className={(selectedDeleteItem === "") ? "disabled" : "active"}>Delete Item</Button>
+                    <Button variant="danger"
+                        style={{ width: "20vh", marginBottom: "5px" }}
+                        onClick={handleDeleteItem}
+                        className={(selectedDeleteItem === "") ? "disabled" : "active"}>Delete Item
+                        </Button>
 
                 </Col>
                 <Col xl={{ span: 6, offset: 1 }} sm={2} md={{ span: 6, offset: 2 }}>
@@ -391,12 +475,13 @@ const CreateOrder: React.FC<{}> = props => {
                                 value={orderNoteInputs.note}
                             />
                         </Form>
-                        <Button style={{ width: "20vh", marginTop: "5px" }}
-                            className={(orderItems[0].product.code === "")
-                                && (orderItems.length === 1)
-                                || (selectedCustomer === "") ? "disabled" : ""}
+                        {(Object.getOwnPropertyNames(props.match.params).length === 0) ? <Button style={{ width: "20vh", marginTop: "5px" }}
+                            className={(orderItems.length === 0)
+                                || (orderItems.length <= 1)
+                                || (selectedCustomer === "") ? "disabled" : "active"}
                             onClick={handleCreateOrder}
-                        >Create Order</Button>
+                        >Create Order</Button> : <Button style={{ width: "20vh", marginTop: "5px" }} onClick={handleUpdateOrder}>Update Order</Button>}
+
                         {processServerResponse()}
                     </div>
                 </Col>
@@ -406,4 +491,4 @@ const CreateOrder: React.FC<{}> = props => {
 
     );
 }
-export default CreateOrder;
+export default withRouter(CreateOrder);

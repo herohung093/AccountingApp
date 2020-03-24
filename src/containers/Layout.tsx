@@ -6,6 +6,7 @@ const Layout: React.FC<{}> = props => {
     return (<div style={{ paddingTop: "72px" }}>
         <Route path="/" exact component={ProcessingOrder}></Route>
         <Route path="/createorder" exact component={CreateOrder}></Route>
+        <Route path="/updateorder/:id" exact component={CreateOrder}></Route>
     </div>);
 }
 export default Layout;

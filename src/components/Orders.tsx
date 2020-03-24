@@ -20,7 +20,7 @@ const StyledOrders = styled.div<{ isLoading: boolean }>`
     left: ${props => props.isLoading && '50%'};
     top: ${props => props.isLoading && '50%'};
 
-    height: ${props => props.isLoading ? '100%' : '80vh'};
+    height: ${props => props.isLoading ? '100%' : '70vh'};
     
     overflow: auto;
 

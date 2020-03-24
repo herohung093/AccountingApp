@@ -70,7 +70,7 @@ const OrderDetail: React.FC<TableProps> = ({ data, loading, headers, handleSelec
                                         return;
                                     } else
                                         return (
-                                            <tr key={item.product.code + Math.random()} style={{
+                                            <tr key={item.id} style={{
                                                 background: item.product.code +
                                                     item.quantity + item.price === selectedItem ? '#00afec' : '', color: item.product.code +
                                                         item.quantity + item.price === selectedItem ? 'white' : ''
@@ -84,15 +84,17 @@ const OrderDetail: React.FC<TableProps> = ({ data, loading, headers, handleSelec
                                                 <td>{item.discount}</td>
                                                 <td>{moneyFormat(item.totalPrice.toString())}</td>
                                             </tr>
-
                                         )
                                 }))}
                         </tbody>
                     </Table>}
-
             </div>
-            <Alert variant="info" style={{ width: "25vh", marginBottom: "0px" }}>Promotion product: <Badge pill variant="primary" style={{ fontSize: "85%" }}>{totalPromotionProduct}</Badge></Alert>
-            <Alert variant="warning" style={{ width: "25vh", marginBottom: "0px" }}>Total Price: <Badge pill variant="warning" style={{ fontSize: "85%" }}>{moneyFormat(totalPrice.toString())}</Badge></Alert>
+            <Alert variant="info" style={{ width: "25vh", marginBottom: "0px" }}>Promotion product:
+            <Badge pill variant="primary" style={{ fontSize: "85%" }}>{totalPromotionProduct}</Badge>
+            </Alert>
+            <Alert variant="warning" style={{ width: "25vh", marginBottom: "0px" }}>Total Price:
+            <Badge pill variant="warning" style={{ fontSize: "85%" }}>{moneyFormat(totalPrice.toString())}</Badge>
+            </Alert>
         </div>
     );
 
