@@ -19,11 +19,8 @@ const StyledOrders = styled.div<{ isLoading: boolean }>`
     position: ${props => props.isLoading && 'absolute'};
     left: ${props => props.isLoading && '50%'};
     top: ${props => props.isLoading && '50%'};
-
     height: ${props => props.isLoading ? '100%' : '70vh'};
-    
     overflow: auto;
-
 `
 
 const Orders: React.FC<TableProps> = ({ data, loading, headers, handleHeaderClick, handleSelectedItem }) => {

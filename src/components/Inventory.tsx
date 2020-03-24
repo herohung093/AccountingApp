@@ -7,13 +7,19 @@ interface TableProps {
     loading: boolean;
     headers: string[];
     handleHeaderClick: (value: string) => void;
-    handleSelectedItem: (code: string) => void;
+    handleSelectedItem: (item: InventoryType) => void;
+    tableHeight: string
 }
 
-const Inventory: React.FC<TableProps> = ({ data, loading, headers, handleHeaderClick, handleSelectedItem }) => {
+const Inventory: React.FC<TableProps> = ({ data, loading, headers, handleHeaderClick, handleSelectedItem, tableHeight }) => {
     const [selectedItem, setSelectedItem] = React.useState<string>("")
+    let style = {
+        height: tableHeight,
+        overflow: "auto",
+        width: "22vh"
+    }
     return (
-        <div style={{ height: "50vh", overflow: "auto", width: "22vh" }}>
+        <div style={style}>
             {loading ? <Spinner animation="grow" /> :
                 <Table striped bordered hover size="sm"  >
                     <TableHeader listOfHeader={headers} handleClick={handleHeaderClick}></TableHeader>
@@ -22,7 +28,7 @@ const Inventory: React.FC<TableProps> = ({ data, loading, headers, handleHeaderC
                             return (
                                 <tr key={item.code} style={{ background: item.code === selectedItem ? '#00afec' : '', color: item.code === selectedItem ? 'white' : '' }} onClick={() => {
                                     setSelectedItem(item.code)
-                                    handleSelectedItem(item.code)
+                                    handleSelectedItem(item)
                                 }}>
                                     <td >{item.code} </td>
                                     <td >{item.stock} </td>

@@ -1,7 +1,7 @@
 import * as React from "react"
 import OrderDetailType from "../Types/OrderDetailType"
 import OrderLineType from "../Types/OrderLineType"
-import { Table, Spinner, Alert, Badge, Row } from "react-bootstrap"
+import { Table, Spinner, Alert, Badge } from "react-bootstrap"
 import TableHeader from "./TableHeader"
 import moneyFormat from "../common/moneyFormat"
 

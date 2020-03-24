@@ -226,8 +226,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const handleSelectedCustomer = (customer: string) => {
         setSelectedCustomer(customer)
     }
-    const handleSelectedIventory = (code: string) => {
-        setSelectedInventoryItem(code)
+    const handleSelectedIventory = (item: InventoryType) => {
+        setSelectedInventoryItem(item.code)
     }
     const handleAddItem = (e: React.FormEvent) => {
 
@@ -367,12 +367,13 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                             />
                         </div>
                     </Row>
-                    <Row>
+                    <Row >
                         <Inventory data={inventory}
                             loading={inventoryLoading}
                             headers={inventoryHeaders}
                             handleHeaderClick={processInventoryHeaderClick}
-                            handleSelectedItem={handleSelectedIventory}></Inventory>
+                            handleSelectedItem={handleSelectedIventory}
+                            tableHeight="50vh"></Inventory>
                     </Row>
                     {updateOrderNumber !== -1 ?
                         <Alert style={{ padding: "0px" }}>
