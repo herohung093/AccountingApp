@@ -60,8 +60,6 @@ const ProcessInventory: React.FC<{}> = props => {
                 if (value.includes("-")) {
 
                     if (item.code.substr(item.code.indexOf("-") + 1).toLowerCase().includes(value.substr(value.indexOf("-")).toLowerCase())) {
-                        console.log(item.code.substr(item.code.indexOf("-") + 1).toLowerCase())
-                        console.log((value.substr(value.indexOf("-") + 1).toLowerCase()))
                         return item;
                     }
                 }
@@ -235,13 +233,13 @@ const ProcessInventory: React.FC<{}> = props => {
                     <Row style={{ marginTop: " 10px", marginLeft: "10px" }}>
                         <Button variant="warning" style={{ width: "20vh" }}
                             onClick={handleIncreaseStock}
-                            className={selectedInventoryItem === undefined ? "disabled" : ""}>Increase Stock
+                            disabled={selectedInventoryItem === undefined}>Increase Stock
                             </Button>
                     </Row>
                     <Row style={{ marginTop: " 10px", marginLeft: "10px" }}>
                         <Button variant="danger" style={{ width: "20vh" }}
                             onClick={handleResetStock}
-                            className={selectedInventoryItem === undefined ? "disabled" : ""}>Reset Stock</Button>
+                            disabled={selectedInventoryItem === undefined}>Reset Stock</Button>
                     </Row>
                 </Col>
             </Row>

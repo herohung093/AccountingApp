@@ -6,9 +6,12 @@ const NavigationItems: React.FC<{}> = props => {
             <NavigationItem link="/" children="Processing Order" />
             <NavigationItem link="/createorder" children="Create Order" />
             <NavigationItem link="/inventory" children="Inventory" />
+            <NavigationItem link="/inventoryhistory" children="Inventory History" />
             <NavigationItem link="/createproduct" children="Create Product" />
             <NavigationItem link="/createcustomer" children="Create Customer" />
-            <NavigationItem link="/inventoryhistory" children="Inventory History" />
+            <NavigationItem link="/powdermixing" children="Powder Mixing" />
+            <NavigationItem link="/customers" children="Customers" />
+
         </ul>
     );
 }

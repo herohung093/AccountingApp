@@ -223,8 +223,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
             setCustomers(filteredData);
         }
     };
-    const handleSelectedCustomer = (customer: string) => {
-        setSelectedCustomer(customer)
+    const handleSelectedCustomer = (customer: CustomerType) => {
+        setSelectedCustomer(customer.name)
     }
     const handleSelectedIventory = (item: InventoryType) => {
         setSelectedInventoryItem(item.code)
@@ -393,9 +393,11 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                                 <Customer data={customers}
                                     headers={customerHeaders}
                                     loading={customerLoading}
+                                    tableHeight="30vh"
+                                    tablewidth="22vh"
                                     handleHeaderClick={processCustomerHeaderClick}
                                     handleSelectedItem={() => { }}
-                                    getSelectedCustomerName={handleSelectedCustomer} />
+                                    getSelectedCustomer={handleSelectedCustomer} />
                             </Row> </>}
                 </Col>
                 <Col xl={3} sm={2} md={2}>
@@ -436,14 +438,14 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                         </Form.Group>
                         <Button variant="primary" type="submit"
                             style={{ width: "20vh", marginBottom: "5px" }}
-                            className={(selectedInventoryItem === undefined) ? "disabled" : "active"}>Add to Order
+                            disabled={selectedInventoryItem === undefined}>Add to Order
                             </Button>
                         {itemExist ? <Alert variant="danger">Product has been added before</Alert> : <></>}
                     </Form>
                     <Button variant="danger"
                         style={{ width: "20vh", marginBottom: "5px" }}
                         onClick={handleDeleteItem}
-                        className={(selectedDeleteItem === "") ? "disabled" : "active"}>Delete Item
+                        disabled={(selectedDeleteItem === "")}>Delete Item
                         </Button>
 
                 </Col>
@@ -477,9 +479,9 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                             />
                         </Form>
                         {(Object.getOwnPropertyNames(props.match.params).length === 0) ? <Button style={{ width: "20vh", marginTop: "5px" }}
-                            className={(orderItems.length === 0)
+                            disabled={(orderItems.length === 0)
                                 || (orderItems.length <= 1)
-                                || (selectedCustomer === "") ? "disabled" : "active"}
+                                || (selectedCustomer === "")}
                             onClick={handleCreateOrder}
                         >Create Order</Button> : <Button style={{ width: "20vh", marginTop: "5px" }} onClick={handleUpdateOrder}>Update Order</Button>}
 

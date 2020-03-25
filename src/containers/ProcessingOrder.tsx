@@ -139,7 +139,6 @@ const ProcessOrder: React.FC<{}> = props => {
                     initOrderDetail = response.data;
                     setOrderDetail([])
                     setOrderDetail(response.data);
-                    console.log(response.data)
                 })
                 .catch(error => console.log(error))
         };
@@ -282,7 +281,7 @@ const ProcessOrder: React.FC<{}> = props => {
                             <Row>
                                 <Col lg="7">
                                     <Button style={{ marginLeft: "5px", marginTop: "10px", width: "80%" }}
-                                        className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                        disabled={(selectedOrder === undefined)}
                                         onClick={() => { }}>Monthly Invoice List
                                 <Badge pill variant="warning"
                                             style={{ marginLeft: "5px" }}>
@@ -293,7 +292,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                 <Col lg="auto">
                                     <Link to={"/updateorder/" + selectedOrder?.id} >
                                         <Button
-                                            className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                            disabled={(selectedOrder === undefined)}
                                             style={{ marginTop: "10px", width: "100%" }}>Update Order</Button>
                                     </Link>
 
@@ -304,7 +303,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                     <Button
                                         style={{ marginTop: "10px", marginLeft: "5px", width: "80%" }}
                                         variant="danger"
-                                        className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                        disabled={(selectedOrder === undefined)}
                                         onClick={() => {
                                             setShowModal(true)
                                         }}
@@ -332,7 +331,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                             />
                                         </Form.Group>
                                         <Button variant="primary" type="submit" style={{ width: "20vh", marginBottom: "5px" }}
-                                            className={((formRef.current?.value.toString()) === "") ? "disabled" : "active"}>Set credit</Button>
+                                            disabled={((formRef.current?.value.toString()) === "")}>Set credit</Button>
                                     </Form>
                                 </Col>
                                 <Col style={{ paddingLeft: "0px" }}>
@@ -343,7 +342,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                     </div>
                                     <div><Button variant="primary"
                                         style={{ width: "20vh", marginBottom: "5px", }}
-                                        className={(selectedOrder === undefined) ? "disabled" : "active"}
+                                        disabled={(selectedOrder === undefined)}
                                         onClick={handlePayOrder}
                                     >Pay For Order</Button>
                                     </div>

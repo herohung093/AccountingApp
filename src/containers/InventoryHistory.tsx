@@ -141,7 +141,7 @@ const InventoryHistory: React.FC<{}> = props => {
                             onChange={() => { }} />
                     </Col>
                     <Col><Button
-                        className={(fromDate === undefined || toDate === undefined || fromDate > toDate) ? "disabled" : ""}
+                        disabled={(fromDate === undefined || toDate === undefined || fromDate > toDate)}
                         style={{ marginTop: "5px", marginBottom: "5px" }} onClick={handleQueryByData}>Search by Date</Button>
 
                     </Col>

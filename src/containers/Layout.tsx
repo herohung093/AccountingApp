@@ -6,6 +6,8 @@ import ProcessInventory from "./ProcessInventory"
 import CreateProduct from "./CreateProduct"
 import CreateCustomer from "./CreateCustomer"
 import InventoryHistory from "./InventoryHistory"
+import PowderMixing from "./PowderMixing"
+import Customers from "./Customers"
 const Layout: React.FC<{}> = props => {
     return (<div style={{ paddingTop: "72px" }}>
         <Route path="/" exact component={ProcessingOrder}></Route>
@@ -15,6 +17,8 @@ const Layout: React.FC<{}> = props => {
         <Route path="/createproduct" exact component={CreateProduct}></Route>
         <Route path="/createcustomer" exact component={CreateCustomer}></Route>
         <Route path="/inventoryhistory" exact component={InventoryHistory}></Route>
+        <Route path="/powdermixing" exact component={PowderMixing}></Route>
+        <Route path="/customers" exact component={Customers}></Route>
     </div>);
 }
 export default Layout;
