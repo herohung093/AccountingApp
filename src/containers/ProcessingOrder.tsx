@@ -80,18 +80,6 @@ const ProcessOrder: React.FC<{}> = props => {
     };
 
     const handleSearchCustomer = (value: string) => {
-        // let filteredData = [...initOrder];
-        // filteredData.length = 0;
-        // if (value === "" || value === null) {
-        //     setOrders(initOrder);
-        // } else if (value !== "") {
-        //     filteredData = initOrder.filter(item => {
-        //         return removeSpecialCharacter(item.customer.toLowerCase()).includes(
-        //             removeSpecialCharacter(value.toLowerCase())
-        //         );
-        //     });
-        //     setOrders(filteredData);
-        // }
         const getCustomers = async () => {
             await axios
                 .get<CustomerType[]>("https://stormy-ridge-84291.herokuapp.com/customer/all/?namePatten=" + value)

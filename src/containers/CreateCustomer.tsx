@@ -1,9 +1,9 @@
 import * as React from "react"
 import axios from "axios"
 import { Col, Button, Form } from "react-bootstrap"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import MessageModal from "../components/Modal/MessageModal"
-
+import { withRouter, RouteComponentProps } from "react-router-dom"
 const initCustomer = {
     name: "",
     phone: "",
@@ -18,11 +18,79 @@ interface CustomerType {
     contactPerson: string;
     note: string;
 }
-const CreateCustomer: React.FC<{}> = props => {
+interface CustomerResponseType {
+    phone: string;
+    address: string;
+    name: string;
+    contactPerson: string;
+    note: string;
+    id: number;
+}
+let routeParameter: routeParam;
+let customerId = 0;
+type routeParam = { name: string; }
+const CreateCustomer: React.FC<RouteComponentProps> = props => {
     const [customerForm, setCustomerForm] = useState<CustomerType>(initCustomer)
     const [showmessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setModalMessage] = useState<string>("");
+    const [updateCustomerNumber, setUpdateCustomerNumber] = useState<string>("")
+    const [updateCustomer, setUpdateCustomer] = useState<CustomerType | undefined>(undefined)
 
+    useEffect(() => {
+        if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
+            routeParameter = props.match.params as routeParam
+            setUpdateCustomerNumber(routeParameter.name)
+            getCustomer(routeParameter.name);
+
+            setCustomerForm(initCustomer)
+        }
+    }, [])
+
+
+    const getCustomer = async (name: string) => {
+        await axios
+            .get<CustomerResponseType>("https://stormy-ridge-84291.herokuapp.com/customer/" + name)
+            .then(response => {
+
+                setUpdateCustomer(response.data);
+                initCustomer.address = response.data.address;
+                initCustomer.contactPerson = response.data.contactPerson;
+                initCustomer.name = response.data.name;
+                initCustomer.note = response.data.note;
+                initCustomer.phone = response.data.phone;
+                customerId = response.data.id
+                setCustomerForm(initCustomer)
+
+
+            })
+            .catch(error => console.log(error))
+    };
+    const handleUpdateCustomer = async () => {
+        if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
+            routeParameter = props.match.params as routeParam
+            const sentData = {
+                name: customerForm.name,
+                phone: customerForm.phone,
+                address: customerForm.address,
+                contactPerson: customerForm.contactPerson,
+                note: customerForm.note,
+                id: customerId,
+            }
+            console.log(sentData)
+            await axios
+                .put("https://stormy-ridge-84291.herokuapp.com/customer/", sentData)
+                .then(response => {
+                    setShowMessageModal(true)
+                    setModalMessage(response.data)
+                })
+                .catch(error => {
+                    setShowMessageModal(true)
+                    setModalMessage(error.toString())
+                    console.log(error)
+
+                })
+        }
+    }
     const handleFormChange = (e: any) => {
         let name = e.target.name;
         let value = e.target.value;
@@ -30,16 +98,21 @@ const CreateCustomer: React.FC<{}> = props => {
         setCustomerForm({ ...customerForm, [name]: value });
 
     }
-    const handleCreateCustomer = (e: any) => {
+    const handlesubmit = (e: any) => {
         e.preventDefault();
-        let sentData = {
-            name: customerForm.name,
-            address: customerForm.address,
-            phone: customerForm.phone,
-            contactPerson: customerForm.contactPerson,
-            note: customerForm.note
+        if ((Object.getOwnPropertyNames(props.match.params).length === 0)) {
+            let sentData = {
+                name: customerForm.name,
+                address: customerForm.address,
+                phone: customerForm.phone,
+                contactPerson: customerForm.contactPerson,
+                note: customerForm.note
+            }
+            sendCreateProduct(sentData)
+        } else {
+            handleUpdateCustomer()
         }
-        sendCreateProduct(sentData)
+
     }
 
     const sendCreateProduct = async (customer: CustomerType) => {
@@ -64,7 +137,7 @@ const CreateCustomer: React.FC<{}> = props => {
                     setShowMessageModal(false)
                     setCustomerForm(initCustomer)
                 }} message={modalMessage} title="Add New Customer" />
-            <Form onSubmit={handleCreateCustomer} >
+            <Form onSubmit={handlesubmit} >
                 <Form.Group>
                     <Form.Label>Name</Form.Label>
                     <Form.Control
@@ -113,9 +186,15 @@ const CreateCustomer: React.FC<{}> = props => {
                     onChange={handleFormChange}
                     value={customerForm.note}
                 />
-                <Button variant="success" type="submit" style={{ marginTop: "10px" }}>Create Customer</Button>
+                {(Object.getOwnPropertyNames(props.match.params).length === 0) ? <Button
+                    variant="success"
+                    type="submit"
+                    style={{ marginTop: "10px" }}>Create Customer</Button> :
+                    <Button variant="success"
+                        type="submit"
+                        style={{ marginTop: "10px" }}>Update Order</Button>}
             </Form>
         </Col>
     </div>)
 }
-export default CreateCustomer;
+export default withRouter(CreateCustomer);

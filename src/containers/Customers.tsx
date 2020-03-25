@@ -140,7 +140,7 @@ const Customers: React.FC<{}> = props => {
                         />
                     </div>
                     <div style={{ margin: "3px", width: "22vh", marginBottom: "5px" }}>
-                        <Link to={"/createcustomer/" + selectedCustomer?.id}>
+                        <Link to={"/updatecustomer/" + selectedCustomer?.name}>
                             <Button
                                 disabled={selectedCustomer === undefined}
                                 style={{ width: "100%" }}>Update Customer</Button>
