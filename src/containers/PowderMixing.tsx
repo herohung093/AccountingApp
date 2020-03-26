@@ -71,7 +71,7 @@ const PowderMixing: React.FC<{}> = props => {
     const [dropdownLable, setDropDownLabel] = React.useState<string>(resultPowder[0])
     const [showmessageModal, setShowMessageModal] = React.useState<boolean>(false)
     const [modalMessage, setModalMessage] = React.useState<string>("");
-    const [disableMixButton, setDissableMixButton] = React.useState<boolean>(true)
+    const [disableMixButton, setDissableMixButton] = React.useState<boolean>(false)
     const [inventory, setInventory] = useState<InventoryType[]>([]);
     const [inventoryLoading, setInventoryLoading] = useState<boolean>(true);
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
@@ -114,7 +114,6 @@ const PowderMixing: React.FC<{}> = props => {
         let name = e.target.name;
         setPowderInput({ ...powderInput, [name]: value })
         checkDisableButton()
-        console.log(parseInt("01"))
     }
     const handleSelectedFinalPowder = (finalPowder: string) => {
         setDropDownLabel(finalPowder)
@@ -130,23 +129,23 @@ const PowderMixing: React.FC<{}> = props => {
 
     }
     const checkDisableButton = () => {
-        if (dropdownLable === "NN-64M" || dropdownLable === "NN-37M" || dropdownLable === "NN-10M") {
-            if (powderInput.NN0 === 0 && powderInput.NN1 === 0 && powderInput.NN2S === 0 && powderInput.NN3ST === 0) {
-                setDissableMixButton(false)
+        // if (dropdownLable === "NN-64M" || dropdownLable === "NN-37M" || dropdownLable === "NN-10M") {
+        //     if (powderInput.NN0 === 0 && powderInput.NN1 === 0 && powderInput.NN2S === 0 && powderInput.NN3ST === 0) {
+        //         setDissableMixButton(false)
 
-            } else setDissableMixButton(true)
-        } else {
-            if (powderInput.NTC0 === 0
-                && powderInput.NTC1 === 0
-                && powderInput.NTC2S === 0
-                && powderInput.NTC3ST === 0
-                && powderInput.NTCA1 === 0
-                && powderInput.NTCA2 === 0
-                && powderInput.NTCA3 === 0) {
-                setDissableMixButton(false)
+        //     } else setDissableMixButton(true)
+        // } else {
+        //     if (powderInput.NTC0 === 0
+        //         && powderInput.NTC1 === 0
+        //         && powderInput.NTC2S === 0
+        //         && powderInput.NTC3ST === 0
+        //         && powderInput.NTCA1 === 0
+        //         && powderInput.NTCA2 === 0
+        //         && powderInput.NTCA3 === 0) {
+        //         setDissableMixButton(true)
 
-            } else setDissableMixButton(true)
-        }
+        //     } else setDissableMixButton(true)
+        // }
     }
     const handleMixPowder = () => {
         if (dropdownLable === "NN-64M" || dropdownLable === "NN-37M" || dropdownLable === "NN-10M") {

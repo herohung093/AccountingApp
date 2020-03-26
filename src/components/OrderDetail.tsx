@@ -89,7 +89,7 @@ const OrderDetail: React.FC<TableProps> = ({ data, loading, headers, handleSelec
                         </tbody>
                     </Table>}
             </div>
-            <Alert variant="info" style={{ width: "25vh", marginBottom: "0px" }}>Promotion product:
+            <Alert variant="info" style={{ width: "25vh", marginBottom: "0px" }}>Promotion products:
             <Badge pill variant="primary" style={{ fontSize: "85%" }}>{totalPromotionProduct}</Badge>
             </Alert>
             <Alert variant="warning" style={{ width: "25vh", marginBottom: "0px" }}>Total Price:

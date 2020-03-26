@@ -1,9 +1,23 @@
 import * as React from "react"
 import NavigationItem from "./NavigationItem"
-import { Navbar, NavDropdown, Nav } from "react-bootstrap"
+import styled from "styled-components"
+import { NavDropdown } from "react-bootstrap"
+
+const Ul = styled.ul`
+margin: 0;
+padding: 0;
+list-style: none;
+display: flex;
+flex-flow: row;
+align-items: center;
+height: 100%;
+
+`
+
 const NavigationItems: React.FC<{}> = props => {
+
     return (
-        <ul style={{ margin: "0", padding: "0", listStyle: "none", display: "flex", alignItems: "center", height: "100%" }}>
+        <Ul style={{ margin: "0", padding: "0", listStyle: "none", display: "flex", alignItems: "center", height: "100%" }}>
 
 
             <NavDropdown title="Order" id="collasible-nav-dropdown">
@@ -20,7 +34,11 @@ const NavigationItems: React.FC<{}> = props => {
                 <NavDropdown.Item ><NavigationItem link="/powdermixing" children="Powder Mixing" /></NavDropdown.Item>
                 <NavDropdown.Item ><NavigationItem link="/createproduct" children="Create Product" /></NavDropdown.Item>
             </NavDropdown>
-        </ul>
+            <NavDropdown title="Analysis" id="collasible-nav-dropdown">
+                <NavigationItem link="/analysis" children="Analysis" />
+            </NavDropdown>
+
+        </Ul>
     );
 }
 export default NavigationItems

@@ -3,7 +3,7 @@ import OrderType from "../Types/OrderType";
 import OrderDetailType from "../Types/OrderDetailType"
 import CustomerType from "../Types/CustomerType"
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Orders from "../components/Orders";
 import OrderDetail from "../components/OrderDetail"
 import SearchInput from "../components/SearchInput";
@@ -16,11 +16,11 @@ import DeleteOrder from "../components/Modal/DeleteOrder"
 import MessageModal from "../components/Modal/MessageModal"
 import { withRouter } from "react-router-dom"
 
+
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
   margin-top: 1%;
-  overflow: auto;
   display: block;
   position: relative;
   height: 100%;
@@ -67,6 +67,19 @@ const ProcessOrder: React.FC<{}> = props => {
     const [monthlyInvoice, setMonthlyInvoice] = useState<OrderType[]>([])
     const [showModal, setShowModal] = useState<boolean>(false)
     const [showMessageModal, setShowMessageModal] = useState<boolean>(false)
+    const [modalMessage, setMessageModal] = useState<string>("");
+    const [modalMessageTitle, setMessageModalTitle] = useState<string>("");
+    useEffect(() => {
+        const kickStartBackendServer = async () => {
+            await axios
+                .get("https://stormy-ridge-84291.herokuapp.com/customer/")
+                .then(response => {
+                    console.log("Backend server started")
+                })
+                .catch(error => console.log(error))
+        };
+        kickStartBackendServer();
+    }, [])
     const getOrdersData = async () => {
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/order/")
@@ -118,7 +131,7 @@ const ProcessOrder: React.FC<{}> = props => {
         setOrderDetail(sortedData)
     }
     const processItemClick = (item: OrderType) => {
-
+        setSelectedOrder(item)
         const getOrderDetail = async () => {
             await axios
                 .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + item.id.toString() + "/items")
@@ -127,6 +140,8 @@ const ProcessOrder: React.FC<{}> = props => {
                     initOrderDetail = response.data;
                     setOrderDetail([])
                     setOrderDetail(response.data);
+
+
                 })
                 .catch(error => console.log(error))
         };
@@ -150,23 +165,31 @@ const ProcessOrder: React.FC<{}> = props => {
     }
 
     const handlePayOrder = () => {
+
         if (selectedOrder !== undefined) {
+
             let amount = 0;
             const totalPrice = calculateTotalPrice()
             const payForOrder = async () => {
                 await axios.put("https://stormy-ridge-84291.herokuapp.com/order/amount/?id=" + selectedOrder.id + "&amount=" + amount)
                     .then(response => {
                         processSuggestionSelect(selectedCustomer);
+                        console.log(response.data)
+                        setMessageModal(response.data)
+                        setMessageModalTitle("Pay for order")
+                        setShowMessageModal(true)
+                        //getCustomerOrdersData(selectedCustomer.id)
                     })
                     .catch(error => console.log(error))
             }
             if (selectedOrder.paid < totalPrice) {
+
                 if (remainingCredit > (totalPrice - selectedOrder.paid)) {
                     amount = totalPrice - selectedOrder.paid;
                     setRemainingCredit(remainingCredit - amount)
                     payForOrder();
                 }
-                if (remainingCredit < (totalPrice - selectedOrder.paid)) {
+                if (remainingCredit <= (totalPrice - selectedOrder.paid)) {
                     amount = remainingCredit;
                     setRemainingCredit(0)
                     payForOrder();
@@ -187,19 +210,19 @@ const ProcessOrder: React.FC<{}> = props => {
         setOrderDetail([])
         setShowSearchSuggestions(false)
         setOrderLoading(true);
-        const getCustomerOrdersData = async () => {
-            await axios
-                .get("https://stormy-ridge-84291.herokuapp.com/order/customer/" + item.id)
-                .then(response => {
-                    setOrders(response.data);
-                    setOrderLoading(false);
-                    // initOrder.length = 0;
-                    // initOrder = response.data;
-                })
-                .catch(error => console.log(error))
-        };
-        getCustomerOrdersData();
+        getCustomerOrdersData(item.id);
     }
+    const getCustomerOrdersData = async (id: number) => {
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/order/customer/" + id)
+            .then(response => {
+                setOrders(response.data);
+                setOrderLoading(false);
+                // initOrder.length = 0;
+                // initOrder = response.data;
+            })
+            .catch(error => console.log(error))
+    };
     const addOrderToInvoiceList = () => {
         if (monthlyInvoice.some(order => order.id === selectedOrder?.id)) {
             return;
@@ -218,6 +241,8 @@ const ProcessOrder: React.FC<{}> = props => {
                         setShowModal(false);
                         setOrders([]);
                         setOrderDetail([]);
+                        setMessageModal("Order has been deledted")
+                        setMessageModalTitle("Delete Order: ")
                         setShowMessageModal(true)
                     })
                     .catch(error => console.log(error))
@@ -253,8 +278,8 @@ const ProcessOrder: React.FC<{}> = props => {
                                     message={selectedOrder as OrderType}
                                 />
                                 <MessageModal
-                                    title={"Delete Order"}
-                                    message={"Order has been deleted."}
+                                    title={modalMessageTitle}
+                                    message={modalMessage}
                                     handleClose={() => { setShowMessageModal(false) }}
                                     show={showMessageModal} />
                             </div>
@@ -319,7 +344,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                             />
                                         </Form.Group>
                                         <Button variant="primary" type="submit" style={{ width: "20vh", marginBottom: "5px" }}
-                                            disabled={((formRef.current?.value.toString()) === "")}>Set credit</Button>
+                                            disabled={(selectedOrder === undefined)}>Set credit</Button>
                                     </Form>
                                 </Col>
                                 <Col style={{ paddingLeft: "0px" }}>
