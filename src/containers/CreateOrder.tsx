@@ -14,6 +14,60 @@ import OrderType from "../Types/OrderType"
 import axios from "axios"
 import OrderDetailType from "../Types/OrderDetailType"
 
+import ConfirmOrder from "../components/Modal/ConfirmOrder"
+import ConfirmOrderType from "../Types/ConfirmOrderType"
+let fakeData: ConfirmOrderType =
+{
+    "id": 2256,
+    "customer": {
+        "id": 4,
+        "name": "Test1",
+        "phone": "N/A",
+        "address": "Labo Quang Trí",
+        "contactPerson": "0963050987 ( Trí )",
+        "note": " tehunf ",
+        "createAt": null
+    },
+    "staff": {
+        "name": "Mai Thi Vu",
+        "mobilePhone": null,
+        "address": null,
+    },
+    "createAt": "26/03/2020",
+    "updateAt": "26/03/2020",
+    "note": "",
+    "instalment": false,
+    "paid": 0.0,
+    "orderLines": [
+        {
+            "product": {
+                "code": "Test-Product-2021",
+                "name": "",
+                "price": 0.0,
+                "unit": ""
+            },
+            "id": -1745183707,
+            "quantity": 1,
+            "price": 1.0,
+            "discount": 0,
+            "totalPrice": 1.0
+        },
+        {
+            "product": {
+                "code": "Test-Product-2021",
+                "name": "",
+                "price": 0.0,
+                "unit": ""
+            },
+            "id": 857819244,
+            "quantity": 1,
+            "price": 0.0,
+            "discount": 0,
+            "totalPrice": 0.0
+        }
+    ]
+}
+
 let initCustomer = [{
     id: 0,
     name: "",
@@ -89,6 +143,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const [isCreateSuccess, setCreateSuccess] = useState<boolean | undefined>(undefined)
     const [updateOrderNumber, setUpdateOrderNumber] = useState<number>(-1)
     const [updateOrder, setUpdateOrder] = useState<OrderType | undefined>(undefined);
+    const [confirmOrderData, setConfirmOrderData] = useState<ConfirmOrderType | undefined>(undefined)
+    const [showConfirmOrder, setShowConfirmOrder] = useState<boolean>(false)
     useEffect(() => {
 
 
@@ -96,13 +152,10 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
             routeParameter = props.match.params as routeParam
             setUpdateOrderNumber(routeParameter.id)
             getUpdateOrderDetai(routeParameter.id)
-
-
-
             setOrderNoteInputs(initOrderNote);
         }
 
-        const getData = async () => {
+        const getCustomerData = async () => {
             await axios
                 .get("https://stormy-ridge-84291.herokuapp.com/customer/")
                 .then(response => {
@@ -114,7 +167,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                 .catch(error => console.log(error))
         };
         loadInventoryData();
-        getData();
+        getCustomerData();
     }, []);
     const loadInventoryData = async () => {
         await axios
@@ -314,7 +367,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         } else {
             newOrder = { customer: selectedCustomer, staff: "Mai Thi Vu", orderLines: sentData, paid: orderNoteInputs.paid, note: orderNoteInputs.note, installment: false }
             sendNewOrderData(newOrder);
-            console.log("create")
+
         }
 
     }
@@ -323,6 +376,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
             .post("https://stormy-ridge-84291.herokuapp.com/order/", order)
             .then(response => {
                 if (response.status === 200) {
+                    setConfirmOrderData(response.data)
+                    setShowConfirmOrder(true)
                     setCreateSuccess(true)
                     loadInventoryData();
                 } else setCreateSuccess(false)
@@ -335,17 +390,17 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
             .put("https://stormy-ridge-84291.herokuapp.com/order/", order)
             .then(response => {
                 if (response.status === 200) {
+                    setConfirmOrderData(response.data)
+                    console.log(response.data)
+                    setShowConfirmOrder(true)
                     setCreateSuccess(true)
                     loadInventoryData();
                 } else setCreateSuccess(false)
             })
-            .catch(error => errorMessage = error)
+            .catch(error => errorMessage = error.toString())
 
     };
     const processServerResponse = () => {
-        if (isCreateSuccess) {
-            return <Alert variant="success" style={{ width: "20vh", marginTop: "5px" }}>Order has been created</Alert>
-        }
         if (isCreateSuccess === undefined)
             return <></>
         if (isCreateSuccess === false) {
@@ -355,8 +410,17 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const handleUpdateOrder = () => {
         handleCreateOrder()
     }
+    const handleCloseCondfirmModal = () => {
+        setShowConfirmOrder(false);
+        setOrderNoteInputs(initOrderNote)
+        setSelectedInventoryItem(undefined)
+        setOrderItems(initOrderLine)
+
+    }
     return (
         <Container style={{ margin: "1vh" }}>
+            {(showConfirmOrder && (confirmOrderData !== undefined)) ? <ConfirmOrder data={confirmOrderData} show={true} handleClose={handleCloseCondfirmModal} /> : ""}
+            {/* <ConfirmOrder data={fakeData as ConfirmOrderType} show={true} handleClose={handleCloseCondfirmModal} /> */}
             <Row >
                 <Col xl={2} sm={4} md={2}>
                     <Row>
@@ -376,12 +440,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                             tableHeight="50vh"></Inventory>
                     </Row>
                     {updateOrderNumber !== -1 ?
-                        <Alert style={{ padding: "0px" }}>
-                            {updateOrder === undefined ? <></> : <Card style={{ marginTop: "2vh", alignContent: "center", width: "100%" }}>
-                                <Card.Title>{updateOrder.customer}</Card.Title>
-                                <Card.Text>Order Id: {updateOrder.id}</Card.Text>
-                            </Card>}
-                        </Alert> : <> <Row>
+                        "" : <> <Row>
                             <div style={{ marginTop: "3px", width: "22vh", marginBottom: "0px" }}>
                                 <SearchInput
                                     holderText={"Search Customer ..."}
@@ -450,6 +509,13 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
 
                 </Col>
                 <Col xl={{ span: 6, offset: 1 }} sm={2} md={{ span: 6, offset: 2 }}>
+                    {updateOrderNumber !== -1 ?
+                        <Alert style={{ alignContent: "center" }} variant="secondary">
+                            <Card.Title>Customer: {updateOrder?.customer}</Card.Title>
+                            <Card.Text>Id: {updateOrder?.id}</Card.Text>
+                        </Alert>
+                        : ""}
+
                     <OrderDetail data={orderItems as Data}
                         loading={false}
                         headers={orderLineHeaders}

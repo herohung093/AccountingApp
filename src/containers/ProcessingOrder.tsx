@@ -16,7 +16,6 @@ import DeleteOrder from "../components/Modal/DeleteOrder"
 import MessageModal from "../components/Modal/MessageModal"
 import { withRouter } from "react-router-dom"
 
-
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -69,6 +68,7 @@ const ProcessOrder: React.FC<{}> = props => {
     const [showMessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setMessageModal] = useState<string>("");
     const [modalMessageTitle, setMessageModalTitle] = useState<string>("");
+
     useEffect(() => {
         const kickStartBackendServer = async () => {
             await axios
@@ -282,6 +282,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                     message={modalMessage}
                                     handleClose={() => { setShowMessageModal(false) }}
                                     show={showMessageModal} />
+
                             </div>
                             <Orders
                                 data={orders}
