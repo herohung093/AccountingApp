@@ -13,60 +13,9 @@ import { withRouter, RouteComponentProps } from "react-router-dom"
 import OrderType from "../Types/OrderType"
 import axios from "axios"
 import OrderDetailType from "../Types/OrderDetailType"
-
 import ConfirmOrder from "../components/Modal/ConfirmOrder"
 import ConfirmOrderType from "../Types/ConfirmOrderType"
-let fakeData: ConfirmOrderType =
-{
-    "id": 2256,
-    "customer": {
-        "id": 4,
-        "name": "Test1",
-        "phone": "N/A",
-        "address": "Labo Quang Trí",
-        "contactPerson": "0963050987 ( Trí )",
-        "note": " tehunf ",
-        "createAt": null
-    },
-    "staff": {
-        "name": "Mai Thi Vu",
-        "mobilePhone": null,
-        "address": null,
-    },
-    "createAt": "26/03/2020",
-    "updateAt": "26/03/2020",
-    "note": "",
-    "instalment": false,
-    "paid": 0.0,
-    "orderLines": [
-        {
-            "product": {
-                "code": "Test-Product-2021",
-                "name": "",
-                "price": 0.0,
-                "unit": ""
-            },
-            "id": -1745183707,
-            "quantity": 1,
-            "price": 1.0,
-            "discount": 0,
-            "totalPrice": 1.0
-        },
-        {
-            "product": {
-                "code": "Test-Product-2021",
-                "name": "",
-                "price": 0.0,
-                "unit": ""
-            },
-            "id": 857819244,
-            "quantity": 1,
-            "price": 0.0,
-            "discount": 0,
-            "totalPrice": 0.0
-        }
-    ]
-}
+import processHeaderClick from "../common/processHeaderClick"
 
 let initCustomer = [{
     id: 0,
@@ -230,37 +179,16 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         }
     };
     const processInventoryHeaderClick = (value: string) => {
-        let sortedData: InventoryType[]
-        if (revertOrder) {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setInventory(sortedData)
+        processHeaderClick(value, revertOrder, inventory, setRevertOrder, setInventory)
+
     };
     const processCustomerHeaderClick = (value: string) => {
-        let sortedData: CustomerType[]
-        if (revertCustomer) {
-            sortedData = [...customers].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomer(false)
-        } else {
-            sortedData = [...customers].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomer(true)
-        }
-        setCustomers(sortedData)
+        processHeaderClick(value, revertCustomer, customers, setRevertCustomer, setCustomers)
+
     }
     const processOrderDetailHeaderClick = (value: string) => {
-        let sortedData: OrderLineType[]
-        if (revertOrder) {
-            sortedData = [...orderItems].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...orderItems].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setOrderItems(sortedData)
+        processHeaderClick(value, revertOrder, orderItems, setRevertOrder, setOrderItems)
+
     }
     const handleSearchCustomer = (value: string) => {
         let filteredData = [...initCustomer];
@@ -420,9 +348,9 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     return (
         <Container style={{ margin: "1vh" }}>
             {(showConfirmOrder && (confirmOrderData !== undefined)) ? <ConfirmOrder data={confirmOrderData} show={true} handleClose={handleCloseCondfirmModal} /> : ""}
-            {/* <ConfirmOrder data={fakeData as ConfirmOrderType} show={true} handleClose={handleCloseCondfirmModal} /> */}
+
             <Row >
-                <Col xl={2} sm={4} md={2}>
+                <Col xl={3} sm={4} md={2}>
                     <Row>
                         <div style={{ marginTop: "3px", width: "22vh" }}>
                             <SearchInput
@@ -459,7 +387,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                                     getSelectedCustomer={handleSelectedCustomer} />
                             </Row> </>}
                 </Col>
-                <Col xl={3} sm={2} md={2}>
+                <Col xl={2} sm={2} md={2}>
                     <Form onSubmit={handleAddItem}
                         style={{ width: "20vh", alignContent: "left" }}>
                         <Form.Group>

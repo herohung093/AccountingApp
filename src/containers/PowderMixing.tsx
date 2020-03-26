@@ -6,6 +6,7 @@ import MessageModal from "../components/Modal/MessageModal"
 import Inventory from "../components/Inventory"
 import { useState, useEffect } from "react"
 import InventoryType from "../Types/InventoryType"
+import processHeaderClick from "../common/processHeaderClick"
 interface PowderType {
     NN1: number;
     NN2S: number;
@@ -62,6 +63,7 @@ let initIventory = [{
         unit: "",
     }
 }]
+
 const inventoryHeaders = ["Product", "Stock"]
 const resultPowder = ["NN-64M", "NN-37M", "NN-10M", "NTC-64M", "NTC-37M", "NTC-10M"]
 const PowderMixing: React.FC<{}> = props => {
@@ -99,15 +101,8 @@ const PowderMixing: React.FC<{}> = props => {
             .catch(error => console.log(error))
     }
     const processInventoryHeaderClick = (value: string) => {
-        let sortedData: InventoryType[]
-        if (revertOrder) {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setInventory(sortedData)
+        processHeaderClick(value, revertOrder, inventory, setRevertOrder, setInventory)
+
     };
     const handlePowderInputChange = (e: any) => {
         let value = e.target.value;

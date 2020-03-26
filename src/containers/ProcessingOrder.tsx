@@ -15,7 +15,7 @@ import { Link } from "react-router-dom"
 import DeleteOrder from "../components/Modal/DeleteOrder"
 import MessageModal from "../components/Modal/MessageModal"
 import { withRouter } from "react-router-dom"
-
+import processHeaderClick from "../common/processHeaderClick"
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -109,26 +109,12 @@ const ProcessOrder: React.FC<{}> = props => {
         }
     };
     const processOrderHeaderClick = (value: string) => {
-        let sortedData: OrderType[]
-        if (revertOrder) {
-            sortedData = [...orders].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...orders].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setOrders(sortedData)
+        processHeaderClick(value, revertOrder, orders, setRevertOrder, setOrders)
+
     };
     const processOrderDetailHeaderClick = (value: string) => {
-        let sortedData: OrderDetailType[]
-        if (revertOrder) {
-            sortedData = [...orderDetail].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...orderDetail].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setOrderDetail(sortedData)
+        processHeaderClick(value, revertOrder, orderDetail, setRevertOrder, setOrderDetail)
+
     }
     const processItemClick = (item: OrderType) => {
         setSelectedOrder(item)

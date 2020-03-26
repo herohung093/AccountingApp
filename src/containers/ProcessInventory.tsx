@@ -6,6 +6,7 @@ import Inventory from "../components/Inventory"
 import { useState, useEffect } from "react"
 import InventoryType from "../Types/InventoryType"
 import MessageModal from "../components/Modal/MessageModal"
+import processHeaderClick from "../common/processHeaderClick"
 let initIventory = [{
     code: "",
     stock: 0,
@@ -72,15 +73,7 @@ const ProcessInventory: React.FC<{}> = props => {
         }
     };
     const processInventoryHeaderClick = (value: string) => {
-        let sortedData: InventoryType[]
-        if (revertOrder) {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...inventory].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setInventory(sortedData)
+        processHeaderClick(value, revertOrder, inventory, setRevertOrder, setInventory)
     };
     const handleSelectedIventory = (item: InventoryType) => {
         setSelectedInventoryItem(item)

@@ -1,12 +1,13 @@
 import * as React from "react"
 import axios from "axios"
-import { Row, Col, Button, Form, Spinner, Table } from "react-bootstrap"
+import { Row, Col, Button, Spinner, Table } from "react-bootstrap"
 import TableHeader from "../components/TableHeader"
 import SearchInput from "../components/SearchInput"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styled from "styled-components"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import processHeaderClick from "../common/processHeaderClick"
 const StyledOrders = styled.div<{ isLoading: boolean }>`
     position: ${props => props.isLoading && 'absolute'};
     left: ${props => props.isLoading && '50%'};
@@ -51,24 +52,21 @@ let initIventory = [{
     }
 
 }]
+const date = new Date()
 const headers = ["Product", "Quantity", "Date", "Note", "Id"]
 const InventoryHistory: React.FC<{}> = props => {
     const [loading, setLoading] = useState<boolean>(false)
     const [data, setData] = useState<InventoryHistoryType[]>(initIventory)
-    const [fromDate, setFromDate] = useState<Date>()
-    const [toDate, setToDate] = useState<Date>()
+    const [fromDate, setFromDate] = useState<Date>(new Date(date.getFullYear(), date.getMonth(), 1))
+    const [toDate, setToDate] = useState<Date>(new Date(date.getFullYear(), date.getMonth() + 1, 0))
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
 
+    useEffect(() => {
+        handleQueryByData()
+    }, [])
     const handleHeaderClick = (value: string) => {
-        let sortedData: InventoryHistoryType[]
-        if (revertOrder) {
-            sortedData = [...data].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(false)
-        } else {
-            sortedData = [...data].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertOrder(true)
-        }
-        setData(sortedData)
+        processHeaderClick(value, revertOrder, data, setRevertOrder, setData)
+
     }
     const handleSearchProduct = (value: string) => {
         let filteredData = [...initIventory];
@@ -105,7 +103,6 @@ const InventoryHistory: React.FC<{}> = props => {
             .get("https://stormy-ridge-84291.herokuapp.com/productinput/date/between?startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setData(response.data);
-                console.log(response.data)
                 initIventory.length = 0;
                 initIventory = response.data;
                 setLoading(false)

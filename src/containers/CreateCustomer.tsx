@@ -33,18 +33,16 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
     const [customerForm, setCustomerForm] = useState<CustomerType>(initCustomer)
     const [showmessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setModalMessage] = useState<string>("");
-    const [updateCustomerNumber, setUpdateCustomerNumber] = useState<string>("")
     const [updateCustomer, setUpdateCustomer] = useState<CustomerType | undefined>(undefined)
 
     useEffect(() => {
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
             routeParameter = props.match.params as routeParam
-            setUpdateCustomerNumber(routeParameter.name)
             getCustomer(routeParameter.name);
 
             setCustomerForm(initCustomer)
         }
-    }, [])
+    }, [updateCustomer])
 
 
     const getCustomer = async (name: string) => {
@@ -55,7 +53,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 setUpdateCustomer(response.data);
                 initCustomer.address = response.data.address;
                 initCustomer.contactPerson = response.data.contactPerson;
-                initCustomer.name = response.data.name;
+                initCustomer.name = name;
                 initCustomer.note = response.data.note;
                 initCustomer.phone = response.data.phone;
                 customerId = response.data.id
@@ -81,7 +79,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 .put("https://stormy-ridge-84291.herokuapp.com/customer/", sentData)
                 .then(response => {
                     setShowMessageModal(true)
-                    setModalMessage(response.data)
+                    setModalMessage(response.data.toString())
                 })
                 .catch(error => {
                     setShowMessageModal(true)
@@ -108,14 +106,14 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 contactPerson: customerForm.contactPerson,
                 note: customerForm.note
             }
-            sendCreateProduct(sentData)
+            sendNewCustomer(sentData)
         } else {
             handleUpdateCustomer()
         }
 
     }
 
-    const sendCreateProduct = async (customer: CustomerType) => {
+    const sendNewCustomer = async (customer: CustomerType) => {
         await axios
             .post("https://stormy-ridge-84291.herokuapp.com/customer/", customer)
             .then(response => {

@@ -1,6 +1,6 @@
 import * as React from "react"
 import axios from "axios"
-import { Row, Col, Button, Form, Alert, Badge } from "react-bootstrap"
+import { Row, Col, Button, Alert, Badge } from "react-bootstrap"
 import SearchInput from "../components/SearchInput"
 import { useState, useEffect } from "react"
 import CustomerType from "../Types/CustomerType"
@@ -12,6 +12,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import CustomerSold from "../components/CustomerSold";
 import CustomerSoldType from "../Types/CustomerSoldType";
 import { Link } from "react-router-dom"
+import processHeaderClick from "../common/processHeaderClick"
 let initCustomer = [{
     id: 0,
     name: "",
@@ -20,7 +21,7 @@ let initCustomer = [{
     contactPerson: "",
     note: ""
 }]
-
+const date = new Date()
 const customerHeaders = ["Id", "Name", "Address", "Phone"]
 const Customers: React.FC<{}> = props => {
     const [customers, setCustomers] = useState<CustomerType[]>(initCustomer);
@@ -32,9 +33,9 @@ const Customers: React.FC<{}> = props => {
     const [selectedCustomer, setSelectedCustomer] = useState<CustomerType | undefined>(undefined);
     const [customerDebt, setCustomerDebt] = useState<number>(0);
     //init with first day of the year
-    const [fromDate, setFromDate] = useState<Date>(new Date(new Date().getFullYear(), 0, 1))
+    const [fromDate, setFromDate] = useState<Date>(new Date(date.getFullYear(), 0, 1))
     //init with last day of the year
-    const [toDate, setToDate] = useState<Date>(new Date(new Date().getFullYear(), 11, 31))
+    const [toDate, setToDate] = useState<Date>(new Date(date.getFullYear(), 11, 31))
     useEffect(() => {
         const getData = async () => {
             await axios
@@ -51,13 +52,13 @@ const Customers: React.FC<{}> = props => {
         getData();
 
     }, [])
-    const getCustomerSoldData = async () => {
+    const getCustomerSoldData = async (id: number) => {
         const to = toDate?.toLocaleDateString();
         const from = fromDate?.toLocaleDateString()
         setCustomerSoldLoading(true)
         await axios
             // eslint-disable-next-line no-useless-concat
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "customersold?id=" + selectedCustomer?.id + "&startDate=" + from + "&endDate=" + to)
+            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "customersold?id=" + id + "&startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setCustomerSoldData(response.data)
                 setCustomerSoldLoading(false)
@@ -65,27 +66,20 @@ const Customers: React.FC<{}> = props => {
             })
             .catch(error => console.log(error))
     }
-    const getCustomerDebt = async () => {
+    const getCustomerDebt = async (id: number) => {
 
 
         await axios
             // eslint-disable-next-line no-useless-concat
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "dept/" + selectedCustomer?.id)
+            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "dept/" + id)
             .then(response => {
                 setCustomerDebt(response.data)
             })
             .catch(error => console.log(error))
     }
     const processCustomerHeaderClick = (value: string) => {
-        let sortedData: CustomerType[]
-        if (revertCustomer) {
-            sortedData = [...customers].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomer(false)
-        } else {
-            sortedData = [...customers].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomer(true)
-        }
-        setCustomers(sortedData)
+        processHeaderClick(value, revertCustomer, customers, setRevertCustomer, setCustomers)
+
     }
     const handleSearchCustomer = (value: string) => {
         let filteredData = [...initCustomer];
@@ -106,28 +100,19 @@ const Customers: React.FC<{}> = props => {
             setSelectedCustomer(customer)
 
         }
-        if (selectedCustomer !== undefined) {
-            getCustomerSoldData()
-            getCustomerDebt()
-        }
 
+        getCustomerSoldData(customer.id)
+        getCustomerDebt(customer.id)
 
     }
     const handleDateChange = () => {
         if (fromDate === undefined || toDate === undefined || fromDate > toDate) { return; }
-
-        getCustomerSoldData()
+        if (selectedCustomer !== undefined)
+            getCustomerSoldData(selectedCustomer.id)
     }
     const processCustomerSoldHeaderClick = (value: string) => {
-        let sortedData: CustomerSoldType[]
-        if (revertCustomerSold) {
-            sortedData = [...customerSoldData].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomerSold(false)
-        } else {
-            sortedData = [...customerSoldData].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
-            setRevertCustomerSold(true)
-        }
-        setCustomerSoldData(sortedData)
+        processHeaderClick(value, revertCustomerSold, customerSoldData, setRevertCustomerSold, setCustomerSoldData)
+
     }
     return (<div>
         <Row >
