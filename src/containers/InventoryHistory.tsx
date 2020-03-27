@@ -99,6 +99,12 @@ const InventoryHistory: React.FC<{}> = props => {
 
     }
     const loadInventoryHistoryData = async (from: string, to: string) => {
+        if (to.length === 9) {
+            to = "0" + to
+        }
+        if (from.length === 9) {
+            from = "0" + from
+        }
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/productinput/date/between?startDate=" + from + "&endDate=" + to)
             .then(response => {
