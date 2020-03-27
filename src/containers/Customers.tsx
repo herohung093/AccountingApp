@@ -68,6 +68,7 @@ const Customers: React.FC<{}> = props => {
             .then(response => {
                 setCustomerSoldData(response.data)
                 setCustomerSoldLoading(false)
+                processDataBeforeGroup(response.data)
 
             })
             .catch(error => console.log(error))
@@ -119,6 +120,46 @@ const Customers: React.FC<{}> = props => {
     const processCustomerSoldHeaderClick = (value: string) => {
         processHeaderClick(value, revertCustomerSold, customerSoldData, setRevertCustomerSold, setCustomerSoldData)
 
+    }
+    const processDataBeforeGroup = (rawData: { product: string, quantity: number }[]) => {
+        let TRC = 0;
+        let TR = 0;
+        let PR = 0;
+        let NN = 0;
+        let NNM = 0;
+        let NTC = 0;
+        let NTCM = 0;
+        let KHAY = 0;
+        let TENAZ = 0;
+        let ACETAL = 0;
+        rawData.forEach(item => {
+            if (item.product.substring(0, item.product.indexOf("-")) === "TRC")
+                TRC += item.quantity;
+            if (item.product.substring(0, item.product.indexOf("-")) === "TR")
+                TR += item.quantity;
+            if (item.product.substring(0, item.product.indexOf("-")) === "PR")
+                PR += item.quantity;
+            if (item.product.substring(0, item.product.indexOf("-")) === "NN")
+                NNM += item.quantity;
+            if (item.product.substring(0, item.product.indexOf("-")) === "NTC")
+                NTCM += item.quantity;
+            if (item.product === "NN")
+                NN += item.quantity
+            if (item.product === "NTC")
+                NTC += item.quantity
+            // if (item.product === "NN")
+            //     NTCM+= item.quantity
+            if (item.product === "NN")
+                KHAY += item.quantity
+            if (item.product === "NN")
+                TENAZ += item.quantity
+            if (item.product === "NN")
+                ACETAL += item.quantity
+
+        }
+
+        )
+        console.log(TRC + "-" + TR + "-" + PR + "-" + NN + "-" + NNM + "-" + NTC + "-" + NTCM + "-" + KHAY + "-" + TENAZ + "-" + ACETAL + "-")
     }
     return (<div>
         <Row >

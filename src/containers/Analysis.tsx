@@ -18,22 +18,27 @@ const Analysis: React.FC<{}> = props => {
     const [last12Month, setLast12Month] = useState<graphType[]>([])
     const [fromDate, setFromDate] = useState<Date>(initFromDate)
     const [toDate, setToDate] = useState<Date>(initToDate)
-    let totalIncome: number[]
-    let top5CustomerIncome: number[]
+    const [totalIncome, setTotalIncome] = useState<number[]>([])
+    const [top5CustomerIncome, setTop5CustomerIncome] = useState<number[]>([])
     const currentDate = new Date();
+    let a = 0;
     let last12MonthLabels = new Array()
     useEffect(() => {
         setupMonthLabels()
         getTop5CustomerIncomeData();
         getLast12MonthData();
-
+        prepareDataTotalIncome()
     }, [])
 
     const getLast12MonthData = async () => {
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/income/time")
             .then(response => {
-                totalIncome = response.data
+                let buff = [...totalIncome]
+                buff.length = 0;
+                buff = response.data
+                setTotalIncome(buff)
+
             })
             .catch(error => console.log(error))
     };
@@ -41,15 +46,15 @@ const Analysis: React.FC<{}> = props => {
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/top5customer/income")
             .then(response => {
-                top5CustomerIncome = response.data
-                prepareDataTotalIncome()
+                setTop5CustomerIncome(response.data)
+                a += 1;
+
             })
             .catch(error => console.log(error))
     };
     const setupMonthLabels = () => {
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1;
-        console.log(currentMonth + "/" + currentYear)
         for (let i = 1; i <= 12 + currentMonth; i++) {
             let monthString = ""
             let index = i;
@@ -72,8 +77,8 @@ const Analysis: React.FC<{}> = props => {
     const prepareDataTotalIncome = () => {
         let buff = [...last12Month]
         for (let i = 0; i <= 12 + currentDate.getMonth(); i++) {
-
-            buff.push({ month: last12MonthLabels[i], income: totalIncome[i], customersTotal: top5CustomerIncome[i] })
+            if (totalIncome[0] !== undefined && top5CustomerIncome[0] !== undefined)
+                buff.push({ month: last12MonthLabels[i], income: totalIncome[i], customersTotal: top5CustomerIncome[i] })
         }
         setLast12Month(buff)
     }
@@ -81,9 +86,9 @@ const Analysis: React.FC<{}> = props => {
     return (
 
 
-        <Container>
+        <div>
             <Row>
-                <Col lg="8" style={{ paddingLeft: "0%" }}>
+                <Col lg="6" style={{ marginLeft: "1%" }}>
                     <Alert variant="warning" style={{ width: "100%", marginLeft: "1%" }}>
                         <header>
                             <h2>Total income over Top 5 customers</h2>
@@ -92,7 +97,7 @@ const Analysis: React.FC<{}> = props => {
                             <LineChart
 
                                 data={last12Month}
-                                margin={{ top: 5, right: 30, left: 50, bottom: 5 }}
+                                margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="month" />
@@ -107,7 +112,7 @@ const Analysis: React.FC<{}> = props => {
                         </ResponsiveContainer>
                     </Alert>
                 </Col>
-                <Col lg="5" style={{ paddingLeft: "0%" }}>
+                <Col lg="5" style={{ marginLeft: "2%" }}>
                     <Row >
                         <Alert variant="info" style={{ width: "100%", justifyContent: "center" }}>
                             <Row>                        <header>
@@ -142,7 +147,7 @@ const Analysis: React.FC<{}> = props => {
                     </CustomerDebt>
                 </Col>
             </Row>
-        </Container>
+        </div>
     )
 }
 export default Analysis;

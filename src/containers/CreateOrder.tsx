@@ -16,7 +16,7 @@ import OrderDetailType from "../Types/OrderDetailType"
 import ConfirmOrder from "../components/Modal/ConfirmOrder"
 import ConfirmOrderType from "../Types/ConfirmOrderType"
 import processHeaderClick from "../common/processHeaderClick"
-
+import MessageModal from "../components/Modal/MessageModal"
 let initCustomer = [{
     id: 0,
     name: "",
@@ -84,7 +84,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const [customerLoading, setCustomerLoading] = useState<boolean>(true);
     const [orderItems, setOrderItems] = useState<OrderLineType[]>(initOrderLine);
     const [selectedCustomer, setSelectedCustomer] = useState<string>("");
-    const [selectedInventoryItem, setSelectedInventoryItem] = useState<string | undefined>(undefined);
+    const [selectedInventoryItem, setSelectedInventoryItem] = useState<InventoryType | undefined>(undefined);
     const [selectedDeleteItem, setSelectedDeleteItem] = useState<string>("");
     const [itemExist, setItemExist] = useState<boolean>(false)
     const [stringInputs, setStringInputs] = useState<AddingItemType>(initAddingItem);
@@ -94,6 +94,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const [updateOrder, setUpdateOrder] = useState<OrderType | undefined>(undefined);
     const [confirmOrderData, setConfirmOrderData] = useState<ConfirmOrderType | undefined>(undefined)
     const [showConfirmOrder, setShowConfirmOrder] = useState<boolean>(false)
+    const [showmessageModal, setShowMessageModal] = useState<boolean>(false)
+    const [modalMessage, setModalMessage] = useState<string>("");
     useEffect(() => {
 
 
@@ -208,21 +210,25 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         setSelectedCustomer(customer.name)
     }
     const handleSelectedIventory = (item: InventoryType) => {
-        setSelectedInventoryItem(item.code)
+        setSelectedInventoryItem(item)
     }
     const handleAddItem = (e: React.FormEvent) => {
-
         e.preventDefault();
 
         const totalPrice = (Number(stringInputs.price) * Number(stringInputs.quantity)) * (100 - Number(stringInputs.discount)) / 100
         if (selectedInventoryItem !== undefined) {
+            if (selectedInventoryItem.stock < Number(stringInputs.quantity)) {
+                setShowMessageModal(true)
+                setModalMessage("Not enough stock !!!")
+                return;
+            }
             orderItems.forEach(item => {
-                if (item.product.code + item.quantity + item.price === selectedInventoryItem + stringInputs.quantity + stringInputs.price) {
+                if (item.product.code + item.quantity + item.price === selectedInventoryItem.code + stringInputs.quantity + stringInputs.price) {
                     setItemExist(true);
 
                 } else {
                     setOrderItems([...orderItems, {
-                        product: { code: selectedInventoryItem, name: "", price: 0, unit: "" },
+                        product: { code: selectedInventoryItem.code, name: "", price: 0, unit: "" },
                         quantity: Number(stringInputs.quantity),
                         price: Number(stringInputs.price),
                         discount: Number(stringInputs.discount),
@@ -345,10 +351,19 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         setOrderItems(initOrderLine)
 
     }
+    // const updateInventoryAfterAdd=(productCode : string)=>{
+    //     setInventory( inventory.map((productCode, item)=>{
+    //         return item;
+    //     }))
+    // }
     return (
         <Container style={{ margin: "1vh" }}>
             {(showConfirmOrder && (confirmOrderData !== undefined)) ? <ConfirmOrder data={confirmOrderData} show={true} handleClose={handleCloseCondfirmModal} /> : ""}
-
+            <MessageModal
+                show={showmessageModal}
+                handleClose={() => {
+                    setShowMessageModal(false)
+                }} message={modalMessage} title="Error when add product to order" />
             <Row >
                 <Col xl={3} sm={4} md={2}>
                     <Row>
