@@ -2,7 +2,6 @@ import TotalProductType from "../Types/TotalProductType"
 import CustomerSoldType from "../Types/CustomerSoldType";
 import OrderLineType from "../Types/OrderLineType";
 import OrderDetailType from "../Types/OrderDetailType";
-import OrderDetail from "../components/OrderDetail";
 import InventoryType from "../Types/InventoryType";
 import BestsellerType from "../Types/BestSellerType";
 

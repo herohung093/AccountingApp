@@ -1,8 +1,5 @@
 import * as React from "react"
 import TotalProductType from "../Types/TotalProductType"
-import CustomerSoldType from "../Types/CustomerSoldType"
-import CustomerSold from "./CustomerSold"
-import { useEffect } from "react"
 import { Table, Alert } from "react-bootstrap"
 import TableHeader from "./TableHeader"
 import moneyFormat from "../common/moneyFormat"
@@ -17,7 +14,7 @@ const TotalProduct: React.FC<TableProps> = ({ rawData }) => {
 
     return (
         <div style={{ marginTop: "1vh" }}>
-            <Alert variant="info" style={{ paddingBottom: "0px", marginBottom: "0px" }}><h6>Group of Products</h6></Alert>
+            <Alert variant="info" style={{ paddingBottom: "0px", marginBottom: "0px", width: "100%" }}><h6>Group of Products</h6></Alert>
             <Table striped bordered hover size="sm"  >
                 <TableHeader listOfHeader={["Product", "Quantity"]} handleClick={() => { }}></TableHeader>
                 <tbody>

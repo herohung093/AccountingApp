@@ -36,14 +36,17 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
     const [updateCustomer, setUpdateCustomer] = useState<CustomerType | undefined>(initCustomer)
 
     useEffect(() => {
-        console.log(props.match)
+        if (props.match.path.includes("createcustomer")) {
+
+            setCustomerForm(initCustomer)
+            return;
+        }
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
             routeParameter = props.match.params as routeParam
             getCustomer(routeParameter.name);
 
 
         }
-        setCustomerForm(initCustomer)
     }, [updateCustomer])
 
 
@@ -53,13 +56,13 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
             .then(response => {
 
                 setUpdateCustomer(response.data);
-                initCustomer.address = response.data.address;
-                initCustomer.contactPerson = response.data.contactPerson;
-                initCustomer.name = name;
-                initCustomer.note = response.data.note;
-                initCustomer.phone = response.data.phone;
-                customerId = response.data.id
-                setCustomerForm(initCustomer)
+                // initCustomer.address = response.data.address;
+                // initCustomer.contactPerson = response.data.contactPerson;
+                // initCustomer.name = name;
+                // initCustomer.note = response.data.note;
+                // initCustomer.phone = response.data.phone;
+                // customerId = response.data.id
+                setCustomerForm(response.data)
 
 
             })

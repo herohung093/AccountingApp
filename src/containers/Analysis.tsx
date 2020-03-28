@@ -1,12 +1,13 @@
 import * as React from "react"
-import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, ComposedChart, Area, Bar, ResponsiveContainer } from "recharts";
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react"
 import axios, { AxiosResponse } from "axios"
-import { Row, Col, Alert, Container } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import CustomerDebt from "../components/CustomerDebt"
 import DatePicker from "react-datepicker";
 import BestSellers from "../components/BestSellers";
 import BestsellerType from "../Types/BestSellerType";
+import moneyFormat from "../common/moneyFormat";
 
 interface graphType {
     month: string;
@@ -119,7 +120,9 @@ const Analysis: React.FC<{}> = props => {
                                     <YAxis tickFormatter={tick => {
                                         return tick.toLocaleString();
                                     }} />
-                                    <Tooltip />
+                                    <Tooltip formatter={function (value, name) {
+                                        return `${moneyFormat(value.toString())}`;
+                                    }} />
                                     <Legend />
                                     <Line type="monotone" dataKey="income" stroke="#8884d8" fontWeight="bold" />
                                     <Line type="monotone" dataKey="customersTotal" stroke="#d89f84" />

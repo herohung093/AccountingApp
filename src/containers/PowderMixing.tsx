@@ -334,10 +334,11 @@ const PowderMixing: React.FC<{}> = props => {
                 <Col lg="3">
                     <Alert>
                         <div style={nnStyle}>
-                            <Form onSubmit={handlePowderInputChange} >
+                            <Form onSubmit={handlePowderInputChange}>
                                 <Form.Group>
                                     <Form.Label>NN-1</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NN-64M") && (dropdownLable.toString() !== "NN-37M") && (dropdownLable.toString() !== "NN-10M") ? true : false}
                                         type="number"
                                         name="NN1"
                                         onChange={handlePowderInputChange}
@@ -347,6 +348,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NN-2S</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NN-64M") && (dropdownLable.toString() !== "NN-37M") && (dropdownLable.toString() !== "NN-10M") ? true : false}
                                         type="number"
                                         name="NN2S"
                                         onChange={handlePowderInputChange}
@@ -356,6 +358,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NN-0</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NN-64M") && (dropdownLable.toString() !== "NN-37M") && (dropdownLable.toString() !== "NN-10M") ? true : false}
                                         type="number"
                                         name="NN0"
                                         onChange={handlePowderInputChange}
@@ -365,6 +368,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NN-3ST</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NN-64M") && (dropdownLable.toString() !== "NN-37M") && (dropdownLable.toString() !== "NN-10M") ? true : false}
                                         type="number"
                                         name="NN3ST"
                                         onChange={handlePowderInputChange}
@@ -402,6 +406,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-1</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTC1"
                                         onChange={handlePowderInputChange}
@@ -411,6 +416,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-2S</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTC2S"
                                         onChange={handlePowderInputChange}
@@ -420,6 +426,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-0</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTC0"
                                         onChange={handlePowderInputChange}
@@ -429,6 +436,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-3ST</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTC3ST"
                                         onChange={handlePowderInputChange}
@@ -438,6 +446,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-A1</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTCA1"
                                         onChange={handlePowderInputChange}
@@ -447,6 +456,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-A2</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTCA2"
                                         onChange={handlePowderInputChange}
@@ -456,6 +466,7 @@ const PowderMixing: React.FC<{}> = props => {
                                 <Form.Group>
                                     <Form.Label>NTC-A3</Form.Label>
                                     <Form.Control
+                                        disabled={(dropdownLable.toString() !== "NTC-64M") && (dropdownLable.toString() !== "NTC-37M") && (dropdownLable.toString() !== "NTC-10M") ? true : false}
                                         type="number"
                                         name="NTCA3"
                                         onChange={handlePowderInputChange}
