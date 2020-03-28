@@ -44,7 +44,6 @@ const CustomerDebt: React.FC<TableProps> = ({ startDate, endDate }) => {
                 {data.map((item: CustomerDebtType) => {
                     if (item.total > item.paid)
                         return (
-
                             <tr key={item.orderId} >
                                 <td >{item.customer} </td>
                                 <td>{item.orderId}</td>

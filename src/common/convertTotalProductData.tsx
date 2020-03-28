@@ -4,8 +4,9 @@ import OrderLineType from "../Types/OrderLineType";
 import OrderDetailType from "../Types/OrderDetailType";
 import OrderDetail from "../components/OrderDetail";
 import InventoryType from "../Types/InventoryType";
+import BestsellerType from "../Types/BestSellerType";
 
-const convertTotalProductData = (customerSold?: CustomerSoldType[], orderLines?: OrderLineType[], orderDetails?: OrderDetailType[], inventory?: InventoryType[]): TotalProductType[] => {
+const convertTotalProductData = (customerSold?: CustomerSoldType[], orderLines?: OrderLineType[], orderDetails?: OrderDetailType[], inventory?: InventoryType[], bestSellers?: BestsellerType[]): TotalProductType[] => {
     let returnData: TotalProductType[]
 
     let TRC = 0;
@@ -118,7 +119,31 @@ const convertTotalProductData = (customerSold?: CustomerSoldType[], orderLines?:
         }
         )
     }
-
+    if (bestSellers) {
+        bestSellers.forEach((item: any) => {
+            if (item.productCode.substring(0, item.productCode.indexOf("-")) === "TRC")
+                TRC += item.totalSold;
+            if (item.productCode.substring(0, item.productCode.indexOf("-")) === "TR")
+                TR += item.totalSold;
+            if (item.productCode.substring(0, item.productCode.indexOf("-")) === "PR")
+                PR += item.totalSold;
+            if (item.productCode.substring(0, item.productCode.indexOf("-")) === "NN")
+                NNM += item.totalSold;
+            if (item.productCode.substring(0, item.productCode.indexOf("-")) === "NTC")
+                NTCM += item.totalSold;
+            if (item.productCode === "NN")
+                NN += item.totalSold
+            if (item.productCode === "NTC")
+                NTC += item.totalSold
+            //     NTCM+= item.totalSold
+            if (item.productCode === "Khay")
+                KHAY += item.totalSold
+            if (item.productCode === "TENAZ")
+                TENAZ += item.totalSold
+            if (item.productCode === "ACETAL")
+                ACETAL += item.totalSold
+        })
+    }
 
 
     returnData = [{
@@ -134,19 +159,19 @@ const convertTotalProductData = (customerSold?: CustomerSoldType[], orderLines?:
         amount: PR
     },
     {
-        name: "NN MÀU ",
+        name: "NHỰA NẤU ",
         amount: NNM
     },
     {
-        name: "NTC MÀU",
+        name: "NHỰA TC",
         amount: NTCM
     },
     {
-        name: "NN",
+        name: "NƯỚC NẤU",
         amount: NN
     },
     {
-        name: "NTC",
+        name: "NƯỚC TC",
         amount: NTC
     },
     {

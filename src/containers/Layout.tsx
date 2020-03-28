@@ -10,7 +10,7 @@ import PowderMixing from "./PowderMixing"
 import Customers from "./Customers"
 import Analysis from "./Analysis"
 const Layout: React.FC<{}> = props => {
-    return (<div style={{ paddingTop: "72px", backgroundColor: "#f7f7f7", height: "100vh" }}>
+    return (<div style={{ paddingTop: "72px", backgroundColor: "#f7f7f7", height: "100%" }}>
         <Route path="/" exact component={Analysis}></Route>
         <Route path="/processingorder" exact component={ProcessingOrder}></Route>
         <Route path="/createorder" exact component={CreateOrder}></Route>

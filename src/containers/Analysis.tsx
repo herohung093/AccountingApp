@@ -5,6 +5,8 @@ import axios, { AxiosResponse } from "axios"
 import { Row, Col, Alert, Container } from "react-bootstrap";
 import CustomerDebt from "../components/CustomerDebt"
 import DatePicker from "react-datepicker";
+import BestSellers from "../components/BestSellers";
+import BestsellerType from "../Types/BestSellerType";
 
 interface graphType {
     month: string;
@@ -20,6 +22,7 @@ const Analysis: React.FC<{}> = props => {
     const [last12Month, setLast12Month] = useState<graphType[]>([])
     const [fromDate, setFromDate] = useState<Date>(initFromDate)
     const [toDate, setToDate] = useState<Date>(initToDate)
+    const [bestSellers, setBestSellers] = useState<BestsellerType[]>([])
     const currentDate = new Date();
     let last12MonthLabels = new Array()
 
@@ -27,7 +30,7 @@ const Analysis: React.FC<{}> = props => {
         setupMonthLabels()
         const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
         const getLast12MonthDataTask = getLast12MonthData();
-
+        getBestSellersData()
         Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask])
             .then((data) => {
 
@@ -77,6 +80,22 @@ const Analysis: React.FC<{}> = props => {
         }
         setLast12Month(buff)
     }
+    const getBestSellersData = async () => {
+        let to = toDate?.toLocaleDateString();
+        let from = fromDate?.toLocaleDateString();
+        if (to.length === 9) {
+            to = "0" + to
+        }
+        if (from.length === 9) {
+            from = "0" + from
+        }
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/analysis/bestseller?startDate=" + from + "&endDate=" + to)
+            .then(response => {
+                setBestSellers(response.data)
+            })
+            .catch(error => console.log(error))
+    }
 
     return (
 
@@ -84,28 +103,33 @@ const Analysis: React.FC<{}> = props => {
         <div>
             <Row>
                 <Col lg="6" style={{ marginLeft: "1%" }}>
-                    <Alert variant="warning" style={{ width: "100%", marginLeft: "1%" }}>
-                        <header>
-                            <h2>Total income over Top 5 customers</h2>
-                        </header>
-                        <ResponsiveContainer width="100%" height={400}>
-                            <LineChart
+                    <Row>
+                        <Alert variant="warning" style={{ width: "100%", marginLeft: "1%" }}>
+                            <header>
+                                <h2>Total income over Top 5 customers</h2>
+                            </header>
+                            <ResponsiveContainer width="100%" height={400}>
+                                <LineChart
 
-                                data={last12Month}
-                                margin={{ top: 5, left: 60, bottom: 5 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" />
-                                <YAxis tickFormatter={tick => {
-                                    return tick.toLocaleString();
-                                }} />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="income" stroke="#8884d8" fontWeight="bold" />
-                                <Line type="monotone" dataKey="customersTotal" stroke="#d89f84" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </Alert>
+                                    data={last12Month}
+                                    margin={{ top: 5, left: 60, bottom: 5 }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="month" />
+                                    <YAxis tickFormatter={tick => {
+                                        return tick.toLocaleString();
+                                    }} />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="income" stroke="#8884d8" fontWeight="bold" />
+                                    <Line type="monotone" dataKey="customersTotal" stroke="#d89f84" />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </Alert>
+                    </Row>
+                    <Row>
+                        <BestSellers data={bestSellers} startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} ></BestSellers>
+                    </Row>
                 </Col>
                 <Col lg="5" style={{ marginLeft: "2%" }}>
                     <Row >

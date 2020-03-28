@@ -33,9 +33,10 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
     const [customerForm, setCustomerForm] = useState<CustomerType>(initCustomer)
     const [showmessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setModalMessage] = useState<string>("");
-    const [updateCustomer, setUpdateCustomer] = useState<CustomerType | undefined>(undefined)
+    const [updateCustomer, setUpdateCustomer] = useState<CustomerType | undefined>(initCustomer)
 
     useEffect(() => {
+        console.log(props.match)
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
             routeParameter = props.match.params as routeParam
             getCustomer(routeParameter.name);

@@ -354,7 +354,7 @@ const ProcessOrder: React.FC<{}> = props => {
                             </Alert>
                         </Row>
                     </Col>
-                    <Col lg="3">
+                    <Col lg="3" md="3">
 
                         <TotalProduct rawData={convertTotalProductData([], [], orderDetail)} />
 
