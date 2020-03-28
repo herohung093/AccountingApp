@@ -21,7 +21,7 @@ const NavigationItems: React.FC<{}> = props => {
 
 
             <NavDropdown title="Order" id="collasible-nav-dropdown">
-                <NavDropdown.Item ><NavigationItem link="/" children="Processing Order" /></NavDropdown.Item>
+                <NavDropdown.Item ><NavigationItem link="/processingorder" children="Processing Order" /></NavDropdown.Item>
                 <NavDropdown.Item ><NavigationItem link="/createorder" children="Create Order" /></NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Customer" id="collasible-nav-dropdown">
@@ -35,7 +35,7 @@ const NavigationItems: React.FC<{}> = props => {
                 <NavDropdown.Item ><NavigationItem link="/createproduct" children="Create Product" /></NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Analysis" id="collasible-nav-dropdown">
-                <NavigationItem link="/analysis" children="Analysis" />
+                <NavigationItem link="/" children="Analysis" />
             </NavDropdown>
 
         </Ul>

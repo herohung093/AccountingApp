@@ -11,7 +11,8 @@ import Customers from "./Customers"
 import Analysis from "./Analysis"
 const Layout: React.FC<{}> = props => {
     return (<div style={{ paddingTop: "72px", backgroundColor: "#f7f7f7", height: "100vh" }}>
-        <Route path="/" exact component={ProcessingOrder}></Route>
+        <Route path="/" exact component={Analysis}></Route>
+        <Route path="/processingorder" exact component={ProcessingOrder}></Route>
         <Route path="/createorder" exact component={CreateOrder}></Route>
         <Route path="/updateorder/:id" exact component={CreateOrder}></Route>
         <Route path="/inventory" exact component={ProcessInventory}></Route>
@@ -21,7 +22,6 @@ const Layout: React.FC<{}> = props => {
         <Route path="/powdermixing" exact component={PowderMixing}></Route>
         <Route path="/customers" exact component={Customers}></Route>
         <Route path="/updatecustomer/:name" exact component={CreateCustomer}></Route>
-        <Route path="/analysis" exact component={Analysis}></Route>
     </div>);
 }
 export default Layout;

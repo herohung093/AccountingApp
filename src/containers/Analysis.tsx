@@ -1,7 +1,7 @@
 import * as React from "react"
 import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, ComposedChart, Area, Bar, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { Row, Col, Alert, Container } from "react-bootstrap";
 import CustomerDebt from "../components/CustomerDebt"
 import DatePicker from "react-datepicker";
@@ -14,44 +14,38 @@ interface graphType {
 const currentDate = new Date()
 const initFromDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
 const initToDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+
 const Analysis: React.FC<{}> = props => {
+
     const [last12Month, setLast12Month] = useState<graphType[]>([])
     const [fromDate, setFromDate] = useState<Date>(initFromDate)
     const [toDate, setToDate] = useState<Date>(initToDate)
-    const [totalIncome, setTotalIncome] = useState<number[]>([])
-    const [top5CustomerIncome, setTop5CustomerIncome] = useState<number[]>([])
     const currentDate = new Date();
-    let a = 0;
     let last12MonthLabels = new Array()
+
     useEffect(() => {
         setupMonthLabels()
-        getTop5CustomerIncomeData();
-        getLast12MonthData();
-        prepareDataTotalIncome()
+        const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
+        const getLast12MonthDataTask = getLast12MonthData();
+
+        Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask])
+            .then((data) => {
+
+                prepareDataTotalIncome({ last12MonthData: data[0].data, top5CustomerIncomeData: data[1].data })
+            })
     }, [])
 
-    const getLast12MonthData = async () => {
-        await axios
+    const getLast12MonthData = (): Promise<AxiosResponse<number[]>> => {
+        return axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/income/time")
-            .then(response => {
-                let buff = [...totalIncome]
-                buff.length = 0;
-                buff = response.data
-                setTotalIncome(buff)
-
-            })
-            .catch(error => console.log(error))
     };
-    const getTop5CustomerIncomeData = async () => {
-        await axios
+
+    const getTop5CustomerIncomeData = (): Promise<AxiosResponse<number[]>> => {
+        return axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/top5customer/income")
-            .then(response => {
-                setTop5CustomerIncome(response.data)
-                a += 1;
 
-            })
-            .catch(error => console.log(error))
     };
+
     const setupMonthLabels = () => {
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1;
@@ -74,11 +68,12 @@ const Analysis: React.FC<{}> = props => {
         }
 
     }
-    const prepareDataTotalIncome = () => {
+    const prepareDataTotalIncome = (params: { last12MonthData: number[], top5CustomerIncomeData: number[] }) => {
+        const { last12MonthData, top5CustomerIncomeData } = params;
         let buff = [...last12Month]
         for (let i = 0; i <= 12 + currentDate.getMonth(); i++) {
-            if (totalIncome[0] !== undefined && top5CustomerIncome[0] !== undefined)
-                buff.push({ month: last12MonthLabels[i], income: totalIncome[i], customersTotal: top5CustomerIncome[i] })
+            if (last12MonthData[0] !== undefined && top5CustomerIncomeData[0] !== undefined)
+                buff.push({ month: last12MonthLabels[i], income: last12MonthData[i], customersTotal: top5CustomerIncomeData[i] })
         }
         setLast12Month(buff)
     }
@@ -97,7 +92,7 @@ const Analysis: React.FC<{}> = props => {
                             <LineChart
 
                                 data={last12Month}
-                                margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+                                margin={{ top: 5, left: 60, bottom: 5 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="month" />

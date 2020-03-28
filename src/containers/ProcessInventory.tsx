@@ -7,6 +7,8 @@ import { useState, useEffect } from "react"
 import InventoryType from "../Types/InventoryType"
 import MessageModal from "../components/Modal/MessageModal"
 import processHeaderClick from "../common/processHeaderClick"
+import TotalProduct from "../components/TotalProduct"
+import convertTotalProductData from "../common/convertTotalProductData"
 let initIventory = [{
     code: "",
     stock: 0,
@@ -183,7 +185,7 @@ const ProcessInventory: React.FC<{}> = props => {
                 message={modalMessage}
                 title={"Update Stock"} />
             <Row>
-                <Col lg="3">
+                <Col lg="4">
                     <Inventory data={inventory}
                         loading={inventoryLoading}
                         headers={inventoryHeaders}
@@ -234,6 +236,9 @@ const ProcessInventory: React.FC<{}> = props => {
                             onClick={handleResetStock}
                             disabled={selectedInventoryItem === undefined}>Reset Stock</Button>
                     </Row>
+                </Col>
+                <Col>
+                    <TotalProduct rawData={convertTotalProductData([], [], [], inventory)} />
                 </Col>
             </Row>
         </div>

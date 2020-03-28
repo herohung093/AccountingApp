@@ -13,6 +13,8 @@ import CustomerSold from "../components/CustomerSold";
 import CustomerSoldType from "../Types/CustomerSoldType";
 import { Link } from "react-router-dom"
 import processHeaderClick from "../common/processHeaderClick"
+import TotalProduct from "../components/TotalProduct"
+import convertTotalProductData from "../common/convertTotalProductData"
 let initCustomer = [{
     id: 0,
     name: "",
@@ -21,11 +23,15 @@ let initCustomer = [{
     contactPerson: "",
     note: ""
 }]
+const initCustomerSold = [{
+    product: "",
+    quantity: 0
+}]
 const date = new Date()
 const customerHeaders = ["Id", "Name", "Address", "Phone"]
 const Customers: React.FC<{}> = props => {
     const [customers, setCustomers] = useState<CustomerType[]>(initCustomer);
-    const [customerSoldData, setCustomerSoldData] = useState<CustomerSoldType[]>([])
+    const [customerSoldData, setCustomerSoldData] = useState<CustomerSoldType[]>(initCustomerSold)
     const [revertCustomer, setRevertCustomer] = useState<boolean>(false);
     const [revertCustomerSold, setRevertCustomerSold] = useState<boolean>(false);
     const [customerLoading, setCustomerLoading] = useState<boolean>(true);
@@ -68,7 +74,6 @@ const Customers: React.FC<{}> = props => {
             .then(response => {
                 setCustomerSoldData(response.data)
                 setCustomerSoldLoading(false)
-                processDataBeforeGroup(response.data)
 
             })
             .catch(error => console.log(error))
@@ -121,46 +126,7 @@ const Customers: React.FC<{}> = props => {
         processHeaderClick(value, revertCustomerSold, customerSoldData, setRevertCustomerSold, setCustomerSoldData)
 
     }
-    const processDataBeforeGroup = (rawData: { product: string, quantity: number }[]) => {
-        let TRC = 0;
-        let TR = 0;
-        let PR = 0;
-        let NN = 0;
-        let NNM = 0;
-        let NTC = 0;
-        let NTCM = 0;
-        let KHAY = 0;
-        let TENAZ = 0;
-        let ACETAL = 0;
-        rawData.forEach(item => {
-            if (item.product.substring(0, item.product.indexOf("-")) === "TRC")
-                TRC += item.quantity;
-            if (item.product.substring(0, item.product.indexOf("-")) === "TR")
-                TR += item.quantity;
-            if (item.product.substring(0, item.product.indexOf("-")) === "PR")
-                PR += item.quantity;
-            if (item.product.substring(0, item.product.indexOf("-")) === "NN")
-                NNM += item.quantity;
-            if (item.product.substring(0, item.product.indexOf("-")) === "NTC")
-                NTCM += item.quantity;
-            if (item.product === "NN")
-                NN += item.quantity
-            if (item.product === "NTC")
-                NTC += item.quantity
-            // if (item.product === "NN")
-            //     NTCM+= item.quantity
-            if (item.product === "NN")
-                KHAY += item.quantity
-            if (item.product === "NN")
-                TENAZ += item.quantity
-            if (item.product === "NN")
-                ACETAL += item.quantity
 
-        }
-
-        )
-        console.log(TRC + "-" + TR + "-" + PR + "-" + NN + "-" + NNM + "-" + NTC + "-" + NTCM + "-" + KHAY + "-" + TENAZ + "-" + ACETAL + "-")
-    }
     return (<div>
         <Row >
             <Col lg="5" md="6" sm="12" style={{ margin: "2%" }}>
@@ -232,10 +198,12 @@ const Customers: React.FC<{}> = props => {
                 </Row>
             </Col>
             <Col style={{ margin: "5px" }}>
+
                 <Alert variant="info"><h5>
                     <div>Customer debt: </div>
                     <Badge pill variant="warning">{moneyFormat(customerDebt.toString())}</Badge></h5>
                 </Alert>
+                <TotalProduct rawData={convertTotalProductData(customerSoldData)}></TotalProduct>
             </Col>
         </Row>
 

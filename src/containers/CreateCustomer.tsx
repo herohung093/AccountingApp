@@ -40,8 +40,9 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
             routeParameter = props.match.params as routeParam
             getCustomer(routeParameter.name);
 
-            setCustomerForm(initCustomer)
+
         }
+        setCustomerForm(initCustomer)
     }, [updateCustomer])
 
 

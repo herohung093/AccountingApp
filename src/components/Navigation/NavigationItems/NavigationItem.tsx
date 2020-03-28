@@ -50,7 +50,7 @@ align-items: center;
 const NavigationItem: React.FC<{ children: string, link: string }> = props => {
     return (
         <Div><Li>
-            <NavLink to={props.link} exact activeStyle={{ color: "#fa923f", textDecoration: "underline" }} style={styledLink} >{props.children}</NavLink>
+            <NavLink to={props.link} exact activeStyle={{ color: "#fa923f", textDecoration: "underline" }} style={styledLink}  >{props.children}</NavLink>
         </Li>
         </Div>
     );

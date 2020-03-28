@@ -16,6 +16,8 @@ import DeleteOrder from "../components/Modal/DeleteOrder"
 import MessageModal from "../components/Modal/MessageModal"
 import { withRouter } from "react-router-dom"
 import processHeaderClick from "../common/processHeaderClick"
+import TotalProduct from "../components/TotalProduct"
+import convertTotalProductData from "../common/convertTotalProductData"
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -58,7 +60,7 @@ const ProcessOrder: React.FC<{}> = props => {
     const [orders, setOrders] = useState<OrderType[]>([]);
     const [orderLoading, setOrderLoading] = useState<boolean>(false);
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
-    const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>([]);
+    const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>(initOrderDetail);
     const [remainingCredit, setRemainingCredit] = useState<number>(0);
     const [selectedOrder, setSelectedOrder] = useState<OrderType | undefined>(undefined)
     const [searchResults, setSearchResults] = useState<CustomerType[]>([])
@@ -93,6 +95,7 @@ const ProcessOrder: React.FC<{}> = props => {
     };
 
     const handleSearchCustomer = (value: string) => {
+
         const getCustomers = async () => {
             await axios
                 .get<CustomerType[]>("https://stormy-ridge-84291.herokuapp.com/customer/all/?namePatten=" + value)
@@ -103,6 +106,7 @@ const ProcessOrder: React.FC<{}> = props => {
         };
         if (value.length > 1) {
             if (value.length % 2 === 0) {
+                console.log(value)
                 setShowSearchSuggestions(true)
                 getCustomers();
             }
@@ -122,9 +126,9 @@ const ProcessOrder: React.FC<{}> = props => {
             await axios
                 .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + item.id.toString() + "/items")
                 .then(response => {
-                    initOrderDetail.length = 0;
-                    initOrderDetail = response.data;
-                    setOrderDetail([])
+                    //initOrderDetail.length = 0;
+                    //initOrderDetail = response.data;
+                    //setOrderDetail([])
                     setOrderDetail(response.data);
 
 
@@ -349,6 +353,11 @@ const ProcessOrder: React.FC<{}> = props => {
                                 </Col>
                             </Alert>
                         </Row>
+                    </Col>
+                    <Col lg="3">
+
+                        <TotalProduct rawData={convertTotalProductData([], [], orderDetail)} />
+
                     </Col>
                 </Row>
             </Container >

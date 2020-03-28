@@ -17,6 +17,9 @@ import ConfirmOrder from "../components/Modal/ConfirmOrder"
 import ConfirmOrderType from "../Types/ConfirmOrderType"
 import processHeaderClick from "../common/processHeaderClick"
 import MessageModal from "../components/Modal/MessageModal"
+import { cloneDeep } from "lodash"
+import TotalProduct from "../components/TotalProduct"
+import convertTotalProductData from "../common/convertTotalProductData"
 let initCustomer = [{
     id: 0,
     name: "",
@@ -236,6 +239,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                         id: ++orderLineId
                     }])
                     setItemExist(false)
+                    updateInventoryAfterAdd(selectedInventoryItem.code)
                 }
 
             })
@@ -351,13 +355,20 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         setOrderItems(initOrderLine)
 
     }
-    // const updateInventoryAfterAdd=(productCode : string)=>{
-    //     setInventory( inventory.map((productCode, item)=>{
-    //         return item;
-    //     }))
-    // }
+    const updateInventoryAfterAdd = (productCode: string) => {
+        let changedInventory = cloneDeep(inventory)
+        changedInventory.map(item => {
+            if (item.code === productCode) {
+                if (selectedInventoryItem !== undefined) {
+                    item.stock -= Number(stringInputs.quantity)
+                }
+
+            }
+        })
+        setInventory(changedInventory)
+    }
     return (
-        <Container style={{ margin: "1vh" }}>
+        <div style={{ marginLeft: "10px", width: "100%" }}>
             {(showConfirmOrder && (confirmOrderData !== undefined)) ? <ConfirmOrder data={confirmOrderData} show={true} handleClose={handleCloseCondfirmModal} /> : ""}
             <MessageModal
                 show={showmessageModal}
@@ -365,7 +376,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                     setShowMessageModal(false)
                 }} message={modalMessage} title="Error when add product to order" />
             <Row >
-                <Col xl={3} sm={4} md={2}>
+                <Col xl={3} sm={4} md={2} >
                     <Row>
                         <div style={{ marginTop: "3px", width: "22vh" }}>
                             <SearchInput
@@ -402,7 +413,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                                     getSelectedCustomer={handleSelectedCustomer} />
                             </Row> </>}
                 </Col>
-                <Col xl={2} sm={2} md={2}>
+                <Col xl={3} sm={2} md={4}>
                     <Form onSubmit={handleAddItem}
                         style={{ width: "20vh", alignContent: "left" }}>
                         <Form.Group>
@@ -451,7 +462,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                         </Button>
 
                 </Col>
-                <Col xl={{ span: 6, offset: 1 }} sm={2} md={{ span: 6, offset: 2 }}>
+                <Col lg="4" sm="2" md="6" >
                     {updateOrderNumber !== -1 ?
                         <Alert style={{ alignContent: "center" }} variant="secondary">
                             <Card.Title>Customer: {updateOrder?.customer}</Card.Title>
@@ -497,8 +508,13 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                         {processServerResponse()}
                     </div>
                 </Col>
+                <Col lg="2" md="4" >
+
+                    <TotalProduct rawData={convertTotalProductData([], orderItems, [], [])} />
+
+                </Col>
             </Row>
-        </Container >
+        </div >
 
 
     );
