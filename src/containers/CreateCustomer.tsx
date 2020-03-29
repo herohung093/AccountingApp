@@ -37,15 +37,12 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
 
     useEffect(() => {
         if (props.match.path.includes("createcustomer")) {
-
             setCustomerForm(initCustomer)
             return;
         }
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
             routeParameter = props.match.params as routeParam
             getCustomer(routeParameter.name);
-
-
         }
     }, [updateCustomer])
 
@@ -56,18 +53,11 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
             .then(response => {
 
                 setUpdateCustomer(response.data);
-                // initCustomer.address = response.data.address;
-                // initCustomer.contactPerson = response.data.contactPerson;
-                // initCustomer.name = name;
-                // initCustomer.note = response.data.note;
-                // initCustomer.phone = response.data.phone;
-                // customerId = response.data.id
                 setCustomerForm(response.data)
-
-
             })
             .catch(error => console.log(error))
     };
+
     const handleUpdateCustomer = async () => {
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
             routeParameter = props.match.params as routeParam
@@ -79,7 +69,6 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 note: customerForm.note,
                 id: customerId,
             }
-            console.log(sentData)
             await axios
                 .put("https://stormy-ridge-84291.herokuapp.com/customer/", sentData)
                 .then(response => {
@@ -90,17 +79,16 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                     setShowMessageModal(true)
                     setModalMessage(error.toString())
                     console.log(error)
-
                 })
         }
     }
+
     const handleFormChange = (e: any) => {
         let name = e.target.name;
         let value = e.target.value;
-
         setCustomerForm({ ...customerForm, [name]: value });
-
     }
+
     const handlesubmit = (e: any) => {
         e.preventDefault();
         if ((Object.getOwnPropertyNames(props.match.params).length === 0)) {
@@ -115,7 +103,6 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
         } else {
             handleUpdateCustomer()
         }
-
     }
 
     const sendNewCustomer = async (customer: CustomerType) => {
@@ -129,9 +116,9 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 setShowMessageModal(true)
                 setModalMessage(error.toString())
                 console.log(error)
-
             })
     }
+
     return (<div>
         <Col lg="4" md="6" sm="10" xs="12">
             <MessageModal

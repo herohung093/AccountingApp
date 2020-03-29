@@ -24,6 +24,7 @@ const Analysis: React.FC<{}> = props => {
     const [fromDate, setFromDate] = useState<Date>(initFromDate)
     const [toDate, setToDate] = useState<Date>(initToDate)
     const [bestSellers, setBestSellers] = useState<BestsellerType[]>([])
+
     const currentDate = new Date();
     let last12MonthLabels = new Array()
 
@@ -97,6 +98,7 @@ const Analysis: React.FC<{}> = props => {
             })
             .catch(error => console.log(error))
     }
+
 
     return (
 

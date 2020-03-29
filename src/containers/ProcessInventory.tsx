@@ -9,6 +9,9 @@ import MessageModal from "../components/Modal/MessageModal"
 import processHeaderClick from "../common/processHeaderClick"
 import TotalProduct from "../components/TotalProduct"
 import convertTotalProductData from "../common/convertTotalProductData"
+import ProductQuantity from "../components/ProductQuantity"
+import DatePicker from "react-datepicker";
+import ProductQuantityType from "../Types/ProductQuantityType"
 let initIventory = [{
     code: "",
     stock: 0,
@@ -24,11 +27,20 @@ const initInventoryInputs = {
     description: "",
     code: "",
 }
+const initProductQuantity = [{
+    productCode: "",
+    quantity: 0,
+    customer: "",
+    orderId: 0
+}]
 interface InventoryInputType {
     stock: number | string;
     description: string;
     code: string;
 }
+const currentDate = new Date()
+const initFromDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+const initToDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
 const inventoryHeaders = ["Product", "Stock"]
 const ProcessInventory: React.FC<{}> = props => {
     const [inventory, setInventory] = useState<InventoryType[]>([]);
@@ -38,6 +50,10 @@ const ProcessInventory: React.FC<{}> = props => {
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
     const [showmessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setModalMessage] = useState<string>("");
+    const [productQuantity, setProductQuantity] = useState<ProductQuantityType[]>([])
+    const [fromDate, setFromDate] = useState<Date>(initFromDate)
+    const [toDate, setToDate] = useState<Date>(initToDate)
+    const [revertProductQuantity, setRevertProductQuantity] = useState<boolean>(false);
     useEffect(() => {
 
         loadInventoryData();
@@ -77,10 +93,15 @@ const ProcessInventory: React.FC<{}> = props => {
     const processInventoryHeaderClick = (value: string) => {
         processHeaderClick(value, revertOrder, inventory, setRevertOrder, setInventory)
     };
+    const processProductQuantityHeaderClick = (value: string) => {
+        processHeaderClick(value, revertProductQuantity, productQuantity, setRevertProductQuantity, setProductQuantity)
+    };
     const handleSelectedIventory = (item: InventoryType) => {
         setSelectedInventoryItem(item)
         setInventoryInputs({ ...inventoryInputs, "code": item.code })
         setInventoryInputs({ ...inventoryInputs, "stock": item.stock })
+
+        getProductQuantityData(item.code)
 
     }
     const handleInventoryInputChange = (e: any) => {
@@ -168,6 +189,24 @@ const ProcessInventory: React.FC<{}> = props => {
             });
 
     };
+
+    const getProductQuantityData = async (product: string) => {
+        let to = toDate?.toLocaleDateString();
+        let from = fromDate?.toLocaleDateString();
+        if (to.length === 9) {
+            to = "0" + to
+        }
+        if (from.length === 9) {
+            from = "0" + from
+        }
+        //setProductQuantity(initProductQuantity)
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/analysis/soldproduct/" + product + "?startDate=" + from + "&endDate=" + to)
+            .then(response => {
+                setProductQuantity(response.data)
+            })
+            .catch(error => console.log(error))
+    }
     return (
         <div style={{ marginLeft: "10px" }}>
             <Row>
@@ -185,7 +224,7 @@ const ProcessInventory: React.FC<{}> = props => {
                 message={modalMessage}
                 title={"Update Stock"} />
             <Row>
-                <Col lg="4">
+                <Col lg="3" md="3">
                     <Inventory data={inventory}
                         loading={inventoryLoading}
                         headers={inventoryHeaders}
@@ -193,10 +232,8 @@ const ProcessInventory: React.FC<{}> = props => {
                         handleSelectedItem={handleSelectedIventory}
                         tableHeight="80vh"></Inventory>
                 </Col>
-                <Col style={{ marginLeft: "0px" }}>
+                <Col lg="2" md="2" style={{ marginLeft: "0px" }}>
                     <Row style={{ marginLeft: "10px" }}>
-
-
                         <Form onSubmit={(e: React.FormEvent) => { e.preventDefault() }}
                             style={{ width: "20vh", alignContent: "left" }}>
                             <Alert variant="primary" style={{ height: "min-content", marginTop: "55px" }}>
@@ -237,8 +274,48 @@ const ProcessInventory: React.FC<{}> = props => {
                             disabled={selectedInventoryItem === undefined}>Reset Stock</Button>
                     </Row>
                 </Col>
-                <Col>
+                <Col lg="3" md="3">
                     <TotalProduct rawData={convertTotalProductData([], [], [], inventory)} />
+                </Col>
+                <Col lg="4">
+                    <div style={{ marginTop: "10px" }}>
+                        <Alert variant="success">
+                            <h4>Number of products sold </h4>
+                            <Row style={{ marginBottom: "5px" }}>
+                                <Col lg="6">
+                                    <DatePicker placeholderText={"From date "}
+                                        selected={fromDate}
+                                        onSelect={date => { setFromDate(date) }}
+                                        dateFormat={"dd/MM/yyyy"}
+                                        onChange={date => {
+                                            if (date !== null)
+                                                setFromDate(date)
+                                            if (selectedInventoryItem !== undefined)
+                                                getProductQuantityData(selectedInventoryItem.code)
+                                        }}
+
+                                    />
+                                </Col>
+                                <Col lg="6">
+                                    <DatePicker placeholderText={"To date "}
+                                        selected={toDate}
+                                        onSelect={date => { setToDate(date) }}
+                                        dateFormat={"dd/MM/yyyy"}
+                                        onChange={date => {
+                                            if (date !== null)
+                                                setToDate(date)
+                                            if (selectedInventoryItem !== undefined)
+                                                getProductQuantityData(selectedInventoryItem.code)
+                                        }} />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <ProductQuantity
+                                    data={productQuantity}
+                                    headerClick={processProductQuantityHeaderClick} />
+                            </Row>
+                        </Alert>
+                    </div>
                 </Col>
             </Row>
         </div>
