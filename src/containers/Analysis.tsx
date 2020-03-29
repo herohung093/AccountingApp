@@ -8,7 +8,9 @@ import DatePicker from "react-datepicker";
 import BestSellers from "../components/BestSellers";
 import BestsellerType from "../Types/BestSellerType";
 import moneyFormat from "../common/moneyFormat";
-
+import TopCustomerType from "../Types/TopCustomerType";
+import TopCustomer from "../components/TopCustomer";
+import processHeaderClick from "../common/processHeaderClick"
 interface graphType {
     month: string;
     income: number;
@@ -24,7 +26,8 @@ const Analysis: React.FC<{}> = props => {
     const [fromDate, setFromDate] = useState<Date>(initFromDate)
     const [toDate, setToDate] = useState<Date>(initToDate)
     const [bestSellers, setBestSellers] = useState<BestsellerType[]>([])
-
+    const [topCustomer, setTopCustomer] = useState<TopCustomerType[]>([])
+    const [revertTopCustomer, setRevertTopCustomer] = useState<boolean>(false);
     const currentDate = new Date();
     let last12MonthLabels = new Array()
 
@@ -33,6 +36,7 @@ const Analysis: React.FC<{}> = props => {
         const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
         const getLast12MonthDataTask = getLast12MonthData();
         getBestSellersData()
+        getTopCustomerData()
         Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask])
             .then((data) => {
 
@@ -99,10 +103,27 @@ const Analysis: React.FC<{}> = props => {
             .catch(error => console.log(error))
     }
 
+    const getTopCustomerData = async () => {
+        let to = toDate?.toLocaleDateString();
+        let from = fromDate?.toLocaleDateString();
+        if (to.length === 9) {
+            to = "0" + to
+        }
+        if (from.length === 9) {
+            from = "0" + from
+        }
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/analysis/topcustomer?startDate=" + from + "&endDate=" + to)
+            .then(response => {
+                setTopCustomer(response.data)
+            })
+            .catch(error => console.log(error))
+    }
 
+    const processTopCustomerHeaderClick = (value: string) => {
+        processHeaderClick(value, revertTopCustomer, topCustomer, setInterval, setTopCustomer)
+    };
     return (
-
-
         <div>
             <Row>
                 <Col lg="6" style={{ marginLeft: "1%" }}>
@@ -113,7 +134,6 @@ const Analysis: React.FC<{}> = props => {
                             </header>
                             <ResponsiveContainer width="100%" height={400}>
                                 <LineChart
-
                                     data={last12Month}
                                     margin={{ top: 5, left: 60, bottom: 5 }}
                                 >
@@ -140,7 +160,7 @@ const Analysis: React.FC<{}> = props => {
                     <Row >
                         <Alert variant="info" style={{ width: "100%", justifyContent: "center" }}>
                             <Row>                        <header>
-                                <h2>Unpaid Orders</h2>
+                                <h5 style={{ paddingLeft: "20px" }}>Unpaid Orders</h5>
                             </header></Row>
                             <Row>
                                 <Col lg="6">
@@ -167,10 +187,14 @@ const Analysis: React.FC<{}> = props => {
                             </Row>
                         </Alert>
                     </Row>
-                    <CustomerDebt startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()}>
-                    </CustomerDebt>
+                    <Row>
+                        <CustomerDebt startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} />
+                    </Row>
+                    <Row><TopCustomer rawData={topCustomer} startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} headerClick={processTopCustomerHeaderClick} /></Row>
+
                 </Col>
             </Row>
+
         </div>
     )
 }

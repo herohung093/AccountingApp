@@ -37,7 +37,7 @@ const CustomerDebt: React.FC<TableProps> = ({ startDate, endDate }) => {
             .catch(error => console.log(error))
     };
 
-    return (<div style={{ overflow: "auto", height: "80vh", width: "100%" }}>
+    return (<div style={{ overflow: "auto", height: "50vh", width: "100%" }}>
         <Table striped bordered hover size="sm" >
             <TableHeader listOfHeader={headers} handleClick={handleHeaderClick}></TableHeader>
             <tbody>
