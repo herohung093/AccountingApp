@@ -6,6 +6,8 @@ import { withRouter, RouteComponentProps } from "react-router-dom"
 import { LoginContext } from "../../components/Context/LoginContext"
 import axios from "axios"
 import styled from "styled-components"
+import LoginBackground from "../../assess/Login_Background.png"
+import { url } from "inspector"
 interface authType {
     user: string;
     password: string;
@@ -38,6 +40,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
             authContext.login();
         }
     })
+
     const handleAuthFormchange = (e: any) => {
         let name = e.target.name;
         let value = e.target.value;
@@ -48,6 +51,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
         e.preventDefault();
         sendLoginRequest();
     }
+
     const sendLoginRequest = async () => {
         const authData = {
             email: auForms.user,
@@ -64,43 +68,42 @@ const Auth: React.FC<RouteComponentProps> = props => {
             })
             .catch(error => {
                 console.log(error)
-
                 // fail actions go here
             }
-
             )
+
     }
     return (
 
-
-        <Div>
-            <Form onSubmit={handleLogin}>
-                <Form.Group controlId="formGroupEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control type="email"
-                        placeholder="Enter email"
-                        required
-                        name="user"
-                        onChange={handleAuthFormchange}
-                        value={auForms.user} />
-                </Form.Group>
-                <Form.Group controlId="formGroupPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password"
-                        placeholder="Password"
-                        required
-                        name="password"
-                        onChange={handleAuthFormchange}
-                        value={auForms.password} />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Sign in
+        <div style={{ width: "100%", height: "100vh", backgroundImage: `url(${LoginBackground})` }}>
+            <Div>
+                <Form onSubmit={handleLogin}>
+                    <Form.Group controlId="formGroupEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email"
+                            placeholder="Enter email"
+                            required
+                            name="user"
+                            onChange={handleAuthFormchange}
+                            value={auForms.user} />
+                    </Form.Group>
+                    <Form.Group controlId="formGroupPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password"
+                            placeholder="Password"
+                            required
+                            name="password"
+                            onChange={handleAuthFormchange}
+                            value={auForms.password} />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">
+                        Sign in
                 </Button>
-            </Form>
-            {authContext.isAuth ? <Redirect to="/" /> : <></>}
-        </Div>
+                </Form>
+                {authContext.isAuth ? <Redirect to="/" /> : <></>}
+            </Div>
 
-
+        </div>
     )
 }
 
