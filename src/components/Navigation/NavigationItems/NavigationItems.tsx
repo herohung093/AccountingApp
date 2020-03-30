@@ -52,7 +52,10 @@ const NavigationItems: React.FC<{}> = props => {
                 <NavDropdown title="Analysis" id="collasible-nav-dropdown">
                     <NavigationItem link="/" children="Analysis" />
                 </NavDropdown>
-                <NavigationItem link="/logout" children="Logout" />
+                <NavDropdown title={localStorage.getItem("email")} id="collasible-nav-dropdown">
+                    <NavigationItem link="/logout" children="Logout" />
+                </NavDropdown>
+
             </>}
 
         </Ul>

@@ -62,7 +62,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
             .post("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAN69UXfzYZyZKiskcOoKs-_iWyGhXYAfo", authData)
             .then(response => {
                 localStorage.setItem("token", response.data.idToken);
-                localStorage.setItem("userId", response.data.localId);
+                localStorage.setItem("email", response.data.email);
                 localStorage.setItem("expiresIn", response.data.expiresIn)
                 authContext.login();
                 setLoginMessage("")
