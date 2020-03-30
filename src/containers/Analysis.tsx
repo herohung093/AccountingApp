@@ -28,11 +28,12 @@ const Analysis: React.FC<{}> = props => {
     const [bestSellers, setBestSellers] = useState<BestsellerType[]>([])
     const [topCustomer, setTopCustomer] = useState<TopCustomerType[]>([])
     const [revertTopCustomer, setRevertTopCustomer] = useState<boolean>(false);
+
     const currentDate = new Date();
     let last12MonthLabels = new Array()
 
     useEffect(() => {
-        setupMonthLabels()
+
         const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
         const getLast12MonthDataTask = getLast12MonthData();
         getBestSellersData()
@@ -121,7 +122,7 @@ const Analysis: React.FC<{}> = props => {
     }
 
     const processTopCustomerHeaderClick = (value: string) => {
-        processHeaderClick(value, revertTopCustomer, topCustomer, setInterval, setTopCustomer)
+        processHeaderClick(value, revertTopCustomer, topCustomer, setRevertTopCustomer, setTopCustomer)
     };
     return (
         <div>
