@@ -38,6 +38,7 @@ const Analysis: React.FC<{}> = props => {
         const getLast12MonthDataTask = getLast12MonthData();
         getBestSellersData()
         getTopCustomerData()
+        setupMonthLabels()
         Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask])
             .then((data) => {
 
