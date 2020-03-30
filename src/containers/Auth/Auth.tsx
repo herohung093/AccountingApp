@@ -7,7 +7,6 @@ import { LoginContext } from "../../components/Context/LoginContext"
 import axios from "axios"
 import styled from "styled-components"
 import LoginBackground from "../../assess/Login_Background.png"
-import { url } from "inspector"
 interface authType {
     user: string;
     password: string;
@@ -34,6 +33,7 @@ padding-right: 1%;
 const Auth: React.FC<RouteComponentProps> = props => {
     const [auForms, setAuthForms] = useState<authType>(initAuthForm)
     const authContext = useContext(LoginContext)
+    const [loginMessage, setLoginMessage] = useState<string>("")
     useEffect(() => {
         if (props.match.path.includes("logout")) {
             localStorage.clear();
@@ -65,9 +65,11 @@ const Auth: React.FC<RouteComponentProps> = props => {
                 localStorage.setItem("userId", response.data.localId);
                 localStorage.setItem("expiresIn", response.data.expiresIn)
                 authContext.login();
+                setLoginMessage("")
             })
             .catch(error => {
                 console.log(error)
+                setLoginMessage(error.message)
                 // fail actions go here
             }
             )
@@ -99,6 +101,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
                     <Button variant="primary" type="submit">
                         Sign in
                 </Button>
+                    <div>{loginMessage}</div>
                 </Form>
                 {authContext.isAuth ? <Redirect to="/" /> : <></>}
             </Div>

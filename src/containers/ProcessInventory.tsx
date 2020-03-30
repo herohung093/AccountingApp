@@ -199,7 +199,6 @@ const ProcessInventory: React.FC<{}> = props => {
         if (from.length === 9) {
             from = "0" + from
         }
-        //setProductQuantity(initProductQuantity)
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/soldproduct/" + product + "?startDate=" + from + "&endDate=" + to)
             .then(response => {

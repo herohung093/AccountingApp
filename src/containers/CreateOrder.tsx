@@ -7,7 +7,7 @@ import OrderDetail, { Data } from "../components/OrderDetail"
 import Inventory from "../components/Inventory"
 import Customer from "../components/Customer"
 import SearchInput from "../components/SearchInput";
-import { Container, Row, Col, Button, Form, Alert, Card } from "react-bootstrap";
+import { Row, Col, Button, Form, Alert, Card } from "react-bootstrap";
 import removeSpecialCharacter from "../common/handleVietnamese";
 import { withRouter, RouteComponentProps } from "react-router-dom"
 import OrderType from "../Types/OrderType"

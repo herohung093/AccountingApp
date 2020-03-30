@@ -10,7 +10,6 @@ import PowderMixing from "./PowderMixing"
 import Customers from "./Customers"
 import Analysis from "./Analysis"
 import Auth from "../containers/Auth/Auth"
-import { useEffect, useState } from "react"
 import { LoginContext } from "../components/Context/LoginContext"
 const Layout: React.FC<{}> = props => {
 

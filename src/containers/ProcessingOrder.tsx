@@ -26,18 +26,7 @@ const OrderList = styled.div`
   position: relative;
   height: 100%;
 `;
-// let initOrder = [
-//     {
-//         id: 0,
-//         customer: "",
-//         createAt: "",
-//         updateAt: "",
-//         paid: 0,
-//         note: "",
-//         installment: false,
-//         staff: ""
-//     }
-// ];
+
 let initOrderDetail = [{
     product: {
         code: "",
