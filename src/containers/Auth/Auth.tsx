@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom"
 import { withRouter, RouteComponentProps } from "react-router-dom"
 import { LoginContext } from "../../components/Context/LoginContext"
 import axios from "axios"
-
+import styled from "styled-components"
 interface authType {
     user: string;
     password: string;
@@ -14,6 +14,21 @@ const initAuthForm = {
     user: "",
     password: ""
 }
+const Div = styled.div`
+width: 100%;
+margin-Top: 5vh;
+height: 100vh;
+padding-left: 1%;
+padding-right: 1%;
+@media(min-width: 500px){
+    width: 50%;
+    margin-Left: 25%;
+}
+@media(min-width: 769px){
+    width: 20%;
+    margin-Left: 40%;
+}
+`
 const Auth: React.FC<RouteComponentProps> = props => {
     const [auForms, setAuthForms] = useState<authType>(initAuthForm)
     const authContext = useContext(LoginContext)
@@ -57,7 +72,8 @@ const Auth: React.FC<RouteComponentProps> = props => {
     }
     return (
 
-        <Col lg="3" md="6" style={{ height: "100vh" }}>
+
+        <Div>
             <Form onSubmit={handleLogin}>
                 <Form.Group controlId="formGroupEmail">
                     <Form.Label>Email address</Form.Label>
@@ -82,7 +98,8 @@ const Auth: React.FC<RouteComponentProps> = props => {
                 </Button>
             </Form>
             {authContext.isAuth ? <Redirect to="/" /> : <></>}
-        </Col>
+        </Div>
+
 
     )
 }

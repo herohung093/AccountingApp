@@ -26,20 +26,7 @@ const styledLink = {
     backgroundColor: "transparent",
     border: "0",
 } as React.CSSProperties;
-// const navLink = styled(NavLink)`
-//     display: block;
-//     width: 100%;
-//     height: 100%;
-//     padding: .25rem 1.5rem;
-//     clear: both;
-//     font-weight: 400;
-//     color: #212529;
-//     text-align: inherit;
-//     white-space: nowrap;
-//     background-color: transparent;
-//     border: 0;
 
-// `
 const Div = styled.div`
 margin: 0;
 box-sizing: border-box;
