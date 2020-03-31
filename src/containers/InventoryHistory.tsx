@@ -73,7 +73,7 @@ const InventoryHistory: React.FC<{}> = props => {
         filteredData.length = 0;
         if (value === "" || value === null) {
             setData(initIventory);
-        } else if (value !== "") {
+        } else {
             filteredData = initIventory.filter(item => {
                 if (value.includes("-")) {
 

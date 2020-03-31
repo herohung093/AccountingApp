@@ -207,6 +207,7 @@ const ProcessOrder: React.FC<{}> = props => {
                         setMessageModal("Order has been deledted")
                         setMessageModalTitle("Delete Order: ")
                         setShowMessageModal(true)
+                        getCustomerOrdersData(selectedCustomer.id)
                     })
                     .catch(error => console.log(error))
             };
