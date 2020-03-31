@@ -75,6 +75,7 @@ let orderLineId = 1;
 
 type routeParam = { id: number; }
 let errorMessage = ""
+let selectedDeleteCode = "";
 const inventoryHeaders = ["Product", "Stock"]
 const customerHeaders = ["Name"]
 const orderLineHeaders = ["Product", "Quantity", "Price", "Discount", "Total Price"]
@@ -259,7 +260,9 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
         setOrderItems(orderItems.filter(item => {
             return item.product.code + item.quantity + item.price !== selectedDeleteItem
         }))
+        updateInventoryAfterDelete(selectedDeleteCode)
         setSelectedDeleteItem("")
+
     }
     const handleOrderNoteForm = (e: any) => {
         let name = e.target.name;
@@ -361,6 +364,19 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
             if (item.code === productCode) {
                 if (selectedInventoryItem !== undefined) {
                     item.stock -= Number(stringInputs.quantity)
+                }
+
+            }
+        })
+        setInventory(changedInventory)
+    }
+
+    const updateInventoryAfterDelete = (productCode: string) => {
+        let changedInventory = cloneDeep(inventory)
+        changedInventory.map(item => {
+            if (item.code === productCode) {
+                if (selectedInventoryItem !== undefined) {
+                    item.stock += Number(stringInputs.quantity)
                 }
 
             }
@@ -473,7 +489,10 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                     <OrderDetail data={orderItems as Data}
                         loading={false}
                         headers={orderLineHeaders}
-                        handleSelectedItem={(product: string) => { setSelectedDeleteItem(product) }}
+                        handleSelectedItem={(value: string, code: string) => {
+                            setSelectedDeleteItem(value)
+                            selectedDeleteCode = code;
+                        }}
                         handleHeaderClick={processOrderDetailHeaderClick}></OrderDetail>
                     <div>
                         <Form onSubmit={handleAddItem}

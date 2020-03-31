@@ -11,8 +11,9 @@ interface TableProps {
     data: Data
     loading: boolean;
     headers: string[];
-    handleSelectedItem: (value: string) => void;
+    handleSelectedItem: (value: string, code: string) => void;
     handleHeaderClick: (value: string) => void;
+
 }
 type DetailOrLine = OrderDetailType[] | OrderLineType[];
 const OrderDetail: React.FC<TableProps> = ({ data, loading, headers, handleSelectedItem, handleHeaderClick }) => {
@@ -76,7 +77,7 @@ const OrderDetail: React.FC<TableProps> = ({ data, loading, headers, handleSelec
                                                         item.quantity + item.price === selectedItem ? 'white' : ''
                                             }} onClick={() => {
                                                 setSelectedItem(item.product.code + item.quantity + item.price)
-                                                handleSelectedItem(item.product.code + item.quantity + item.price)
+                                                handleSelectedItem(item.product.code + item.quantity + item.price, item.product.code)
                                             }}>
                                                 <td >{item.product.code} </td>
                                                 <td >{item.quantity} </td>
