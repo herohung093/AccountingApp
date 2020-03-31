@@ -16,7 +16,7 @@ const Inventory: React.FC<TableProps> = ({ data, loading, headers, handleHeaderC
     let style = {
         height: tableHeight,
         overflow: "auto",
-        width: "22vh"
+        width: "100%"
     }
     return (
         <div style={style}>

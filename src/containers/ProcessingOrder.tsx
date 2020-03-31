@@ -3,7 +3,7 @@ import OrderType from "../Types/OrderType";
 import OrderDetailType from "../Types/OrderDetailType"
 import CustomerType from "../Types/CustomerType"
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import Orders from "../components/Orders";
 import OrderDetail from "../components/OrderDetail"
 import SearchInput from "../components/SearchInput";
@@ -43,6 +43,7 @@ let initOrderDetail = [{
 }];
 const orderHeaders = ["Id", "Customer", "Create At", "Paid", "Note"];
 const orderDetailheaders = ["Product", "Quantity", "Price", "Discount", "Total Price"];
+
 let selectedCustomer: CustomerType;
 const ProcessOrder: React.FC<{}> = props => {
     const formRef = React.useRef<HTMLInputElement>()
@@ -60,25 +61,12 @@ const ProcessOrder: React.FC<{}> = props => {
     const [modalMessage, setMessageModal] = useState<string>("");
     const [modalMessageTitle, setMessageModalTitle] = useState<string>("");
 
-    useEffect(() => {
-        const kickStartBackendServer = async () => {
-            await axios
-                .get("https://stormy-ridge-84291.herokuapp.com/customer/")
-                .then(response => {
-                    console.log("Backend server started")
-                })
-                .catch(error => console.log(error))
-        };
-        kickStartBackendServer();
-    }, [])
     const getOrdersData = async () => {
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/order/")
             .then(response => {
                 setOrders(response.data);
                 setOrderLoading(false);
-                // initOrder.length = 0;
-                // initOrder = response.data;
             })
             .catch(error => console.log(error))
     };
@@ -115,9 +103,6 @@ const ProcessOrder: React.FC<{}> = props => {
             await axios
                 .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + item.id.toString() + "/items")
                 .then(response => {
-                    //initOrderDetail.length = 0;
-                    //initOrderDetail = response.data;
-                    //setOrderDetail([])
                     setOrderDetail(response.data);
 
 
@@ -197,8 +182,7 @@ const ProcessOrder: React.FC<{}> = props => {
             .then(response => {
                 setOrders(response.data);
                 setOrderLoading(false);
-                // initOrder.length = 0;
-                // initOrder = response.data;
+
             })
             .catch(error => console.log(error))
     };

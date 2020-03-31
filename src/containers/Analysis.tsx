@@ -91,12 +91,7 @@ const Analysis: React.FC<{}> = props => {
     const getBestSellersData = async () => {
         let to = toDate?.toLocaleDateString();
         let from = fromDate?.toLocaleDateString();
-        if (to.length === 9) {
-            to = "0" + to
-        }
-        if (from.length === 9) {
-            from = "0" + from
-        }
+
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/bestseller?startDate=" + from + "&endDate=" + to)
             .then(response => {
@@ -108,12 +103,7 @@ const Analysis: React.FC<{}> = props => {
     const getTopCustomerData = async () => {
         let to = toDate?.toLocaleDateString();
         let from = fromDate?.toLocaleDateString();
-        if (to.length === 9) {
-            to = "0" + to
-        }
-        if (from.length === 9) {
-            from = "0" + from
-        }
+
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/topcustomer?startDate=" + from + "&endDate=" + to)
             .then(response => {

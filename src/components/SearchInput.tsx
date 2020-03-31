@@ -23,7 +23,6 @@ const SearchInput: React.FC<SearchInputProps> = ({ holderText, handleSearchChang
                         name="searchInput"
                         onChange={handleFormChange}
                         value={searchValue}
-
                     />
                 </Form.Group>
             </Form></div>

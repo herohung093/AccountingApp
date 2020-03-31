@@ -376,7 +376,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                     setShowMessageModal(false)
                 }} message={modalMessage} title="Error when add product to order" />
             <Row >
-                <Col xl={3} sm={4} md={2} >
+                <Col xl={3} sm={4} md={3} >
                     <Row>
                         <div style={{ marginTop: "3px", width: "22vh" }}>
                             <SearchInput

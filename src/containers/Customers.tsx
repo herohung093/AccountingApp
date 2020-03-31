@@ -61,12 +61,7 @@ const Customers: React.FC<{}> = props => {
     const getCustomerSoldData = async (id: number) => {
         let to = toDate?.toLocaleDateString();
         let from = fromDate?.toLocaleDateString()
-        if (to.length === 9) {
-            to = "0" + to
-        }
-        if (from.length === 9) {
-            from = "0" + from
-        }
+
         setCustomerSoldLoading(true)
         await axios
             // eslint-disable-next-line no-useless-concat

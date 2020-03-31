@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Form, Button, Col } from "react-bootstrap"
-import { useState, useEffect, useContext } from "react"
+import { Form, Button } from "react-bootstrap"
+import { useState, useEffect, useContext, useCallback } from "react"
 import { Redirect } from "react-router-dom"
 import { withRouter, RouteComponentProps } from "react-router-dom"
 import { LoginContext } from "../../components/Context/LoginContext"
@@ -35,11 +35,20 @@ const Auth: React.FC<RouteComponentProps> = props => {
     const authContext = useContext(LoginContext)
     const [loginMessage, setLoginMessage] = useState<string>("")
     useEffect(() => {
+        kickStartBackendServer();
         if (props.match.path.includes("logout")) {
             localStorage.clear();
             authContext.login();
         }
     })
+    const kickStartBackendServer = async () => {
+        await axios
+            .get("https://stormy-ridge-84291.herokuapp.com/customer/")
+            .then(response => {
+                console.log("Backend server started")
+            })
+            .catch(error => console.log(error))
+    };
 
     const handleAuthFormchange = (e: any) => {
         let name = e.target.name;

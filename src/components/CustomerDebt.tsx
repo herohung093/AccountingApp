@@ -23,12 +23,7 @@ const CustomerDebt: React.FC<TableProps> = ({ startDate, endDate }) => {
         processHeaderClick(value, revertOrder, data, setRevertOrder, setData)
     }
     const getData = async () => {
-        if (startDate.length === 9) {
-            startDate = "0" + startDate
-        }
-        if (endDate.length === 9) {
-            endDate = "0" + endDate
-        }
+
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/dept?startDate=" + startDate + "&endDate=" + endDate)
             .then(response => {
