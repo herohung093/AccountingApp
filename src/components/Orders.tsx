@@ -21,6 +21,7 @@ const StyledOrders = styled.div<{ isLoading: boolean }>`
     top: ${props => props.isLoading && '50%'};
     height: ${props => props.isLoading ? '100%' : '70vh'};
     overflow: auto;
+    width: 100%;
 `
 
 const Orders: React.FC<TableProps> = ({ data, loading, headers, handleHeaderClick, handleSelectedItem }) => {
@@ -41,10 +42,10 @@ const Orders: React.FC<TableProps> = ({ data, loading, headers, handleHeaderClic
                                     handleSelectedItem(item)
                                 }} >
                                     <td >{item.id} </td>
-                                    <td>{item.customer}</td>
+                                    <td style={{ width: "40%" }}>{item.customer}</td>
                                     <td>{item.createAt}</td>
                                     <td>{moneyFormat(item.paid.toString())}</td>
-                                    <td>{item.note}</td>
+                                    <td style={{ width: "30%" }}>{item.note}</td>
                                 </tr>)
                         })}
                     </tbody>

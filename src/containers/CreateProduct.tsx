@@ -63,7 +63,7 @@ const CreateProduct: React.FC<{}> = props => {
             })
     }
     return (
-        <div>
+        <div style={{ height: "100vh" }}>
             <Col lg="4" md="6" sm="10" xs="12">
                 <MessageModal
                     show={showmessageModal}

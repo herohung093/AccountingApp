@@ -407,13 +407,13 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                                     headers={customerHeaders}
                                     loading={customerLoading}
                                     tableHeight="30vh"
-                                    tablewidth="22vh"
+                                    tablewidth="100%"
                                     handleHeaderClick={processCustomerHeaderClick}
                                     handleSelectedItem={() => { }}
                                     getSelectedCustomer={handleSelectedCustomer} />
                             </Row> </>}
                 </Col>
-                <Col xl={3} sm={2} md={4}>
+                <Col xl={2} sm={2} md={4}>
                     <Form onSubmit={handleAddItem}
                         style={{ width: "20vh", alignContent: "left" }}>
                         <Form.Group>

@@ -113,8 +113,8 @@ const InventoryHistory: React.FC<{}> = props => {
     return (
         <div>
             <Col>
-                <Row>
-                    <Col lg="3">
+                <Row style={{ width: "70%" }}>
+                    <Col lg="3" md="4">
                         <div style={{ marginTop: "3px", width: "100%" }}>
                             <SearchInput
                                 holderText={"Search product ..."}
@@ -123,7 +123,7 @@ const InventoryHistory: React.FC<{}> = props => {
                         </div>
 
                     </Col>
-                    <Col lg="2">
+                    <Col lg="2" md="3">
                         <DatePicker placeholderText={"From date "}
                             selected={fromDate}
                             onSelect={date => { setFromDate(date) }}
@@ -131,21 +131,21 @@ const InventoryHistory: React.FC<{}> = props => {
                             onChange={() => { }}
                         />
                     </Col>
-                    <Col lg="2">
+                    <Col lg="2" md="3">
                         <DatePicker placeholderText={"To date "}
                             selected={toDate}
                             onSelect={date => { setToDate(date) }}
                             dateFormat={"dd/MM/yyyy"}
                             onChange={() => { }} />
                     </Col>
-                    <Col><Button
+                    <Col md="4"><Button
                         disabled={(fromDate === undefined || toDate === undefined || fromDate > toDate)}
                         style={{ marginTop: "5px", marginBottom: "5px" }} onClick={handleQueryByData}>Search by Date</Button>
 
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg="8">
+                    <Col lg="6">
                         <StyledOrders isLoading={loading}>
                             {loading ? <Spinner animation="grow" /> :
                                 <Table striped bordered hover size="sm" >

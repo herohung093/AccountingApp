@@ -47,9 +47,9 @@ const Customer: React.FC<TableProps> = ({ data, loading, headers, handleHeaderCl
                                         getSelectedCustomer(item)
                                     }}>
                                         <td >{item.id} </td>
-                                        <td >{item.name}</td>
-                                        <td >{item.address} </td>
-                                        <td >{item.phone} </td>
+                                        <td style={{ width: "30%" }}>{item.name}</td>
+                                        <td style={{ width: "30%" }}>{item.address} </td>
+                                        <td style={{ width: "30%" }}>{item.phone} </td>
                                     </tr>)
                             })}
                         </tbody>}

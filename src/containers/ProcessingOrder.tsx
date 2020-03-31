@@ -215,13 +215,13 @@ const ProcessOrder: React.FC<{}> = props => {
     }
     return (
         <div>
-            <Container style={{ margin: "0px" }}>
-                <Row style={{ height: "50%" }}>
-                    <Col>
+            <div style={{ margin: "0px", width: "100%" }}>
+                <Row style={{ height: "50%", width: "100%" }}>
+                    <Col lg="6">
                         <OrderList>
                             <div style={{ margin: "1%" }}>
                                 <Row>
-                                    <Col lg="7">
+                                    <Col lg="6">
                                         <SearchInput
                                             holderText={"Search order by customer name ..."}
                                             handleSearchChange={handleSearchCustomer}
@@ -289,11 +289,12 @@ const ProcessOrder: React.FC<{}> = props => {
                             </Row>
                         </OrderList>
                     </Col>
-                    <Col style={{ marginTop: "65px" }}><OrderDetail data={orderDetail}
-                        headers={orderDetailheaders}
-                        loading={false}
-                        handleSelectedItem={() => { }}
-                        handleHeaderClick={processOrderDetailHeaderClick}></OrderDetail>
+                    <Col lg="4" md="8" style={{ marginTop: "65px" }}>
+                        <OrderDetail data={orderDetail}
+                            headers={orderDetailheaders}
+                            loading={false}
+                            handleSelectedItem={() => { }}
+                            handleHeaderClick={processOrderDetailHeaderClick}></OrderDetail>
                         <Row style={{ marginLeft: "2px" }}>
                             <Alert variant="success" style={{ width: "25vh", marginTop: "10px" }}>
                                 <Col style={{ paddingLeft: "0px" }}>
@@ -327,13 +328,13 @@ const ProcessOrder: React.FC<{}> = props => {
                             </Alert>
                         </Row>
                     </Col>
-                    <Col lg="3" md="3">
+                    <Col lg="2" md="3" style={{ marginTop: "30px" }}>
 
                         <TotalProduct rawData={convertTotalProductData([], [], orderDetail)} />
 
                     </Col>
                 </Row>
-            </Container >
+            </div >
         </div >
     );
 };

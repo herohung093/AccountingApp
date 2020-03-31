@@ -124,7 +124,7 @@ const Customers: React.FC<{}> = props => {
 
     return (<div>
         <Row >
-            <Col lg="5" md="6" sm="12" style={{ margin: "2%" }}>
+            <Col lg="5" md="12" sm="12" style={{ margin: "2%" }}>
                 <Row>
                     <div style={{ marginTop: "3px", width: "22vh", marginBottom: "0px" }}>
                         <SearchInput
@@ -152,7 +152,7 @@ const Customers: React.FC<{}> = props => {
                         getSelectedCustomer={handleSelectedCustomer} />
                 </Row>
             </Col>
-            <Col lg="4" style={{ margin: "5px" }}>
+            <Col lg="3" md="6" style={{ margin: "5px" }}>
 
                 <Row>
                     <Alert variant="warning" style={{ marginTop: "0px", width: "100%", alignContent: "center" }}>
@@ -192,7 +192,7 @@ const Customers: React.FC<{}> = props => {
                     </CustomerSold>
                 </Row>
             </Col>
-            <Col style={{ margin: "5px" }}>
+            <Col lg="3" md="4" style={{ margin: "5px" }}>
 
                 <Alert variant="info"><h5>
                     <div>Customer debt: </div>
