@@ -75,18 +75,26 @@ const InventoryHistory: React.FC<{}> = props => {
             setData(initIventory);
         } else {
             filteredData = initIventory.filter(item => {
-                if (value.includes("-")) {
+                let valueArr = value.toLowerCase().toString().split("-")
+                let itemArr = item.product.code.toLowerCase().split("-")
+                if (valueArr.length === 1) {
+                    if (itemArr[0].includes(valueArr[0])) {
+                        return item;
+                    }
+                } else if (valueArr.length === 2) {
+                    if (itemArr.length === 1)
+                        if (itemArr[0] === valueArr[0]) return item
+                    if (itemArr[0].includes(valueArr[0]) && itemArr[1].includes(valueArr[1])) {
+                        return item;
+                    }
+                } else if (valueArr.length === 3) {
 
-                    if (item.product.code.substr(item.product.code.indexOf("-") + 1).toLowerCase().includes(value.substr(value.indexOf("-")).toLowerCase())) {
-                        console.log(item.product.code.substr(item.product.code.indexOf("-") + 1).toLowerCase())
-                        console.log((value.substr(value.indexOf("-") + 1).toLowerCase()))
+                    if (itemArr.length === 2)
+                        if (itemArr[1] === valueArr[1]) return item
+                    if (itemArr[0].includes(valueArr[0]) && itemArr[1].includes(valueArr[1]) && itemArr[2].includes(valueArr[2])) {
                         return item;
                     }
                 }
-                return item.product.code.toLowerCase().includes(
-                    value.toLowerCase()
-                );
-
             });
             setData(filteredData);
         }

@@ -10,7 +10,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ holderText, handleSearchChang
     const handleFormChange = (e: any) => {
         e.preventDefault();
         setSearchValue(e.target.value)
-        handleSearchChange(searchValue)
+        handleSearchChange(e.target.value)
     }
 
     return (
