@@ -44,7 +44,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
             routeParameter = props.match.params as routeParam
             getCustomer(routeParameter.name);
         }
-    }, [updateCustomer])
+    }, [])
 
 
     const getCustomer = async (name: string) => {
@@ -54,12 +54,15 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
 
                 setUpdateCustomer(response.data);
                 setCustomerForm(response.data)
+                customerId = response.data.id;
+
             })
             .catch(error => console.log(error))
     };
 
     const handleUpdateCustomer = async () => {
         if (Object.getOwnPropertyNames(props.match.params).length !== 0) {
+
             routeParameter = props.match.params as routeParam
             const sentData = {
                 name: customerForm.name,
@@ -69,6 +72,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
                 note: customerForm.note,
                 id: customerId,
             }
+            console.log(sentData)
             await axios
                 .put("https://stormy-ridge-84291.herokuapp.com/customer/", sentData)
                 .then(response => {

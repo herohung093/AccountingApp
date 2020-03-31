@@ -13,7 +13,7 @@ const processHeaderClick = (
         sortedData = [...sourceData].sort((a, b) => (Reflect.get(a, value) > Reflect.get(b, value)) ? 1 : -1)
         setRevertOrder(false)
     } else {
-        sortedData = [...sourceData].sort((a, b) => (Reflect.get(a, value) < Reflect.get(b, value)) ? 1 : -1)
+        sortedData = [...sourceData].reverse()
         setRevertOrder(true)
     }
     setNewData(sortedData)

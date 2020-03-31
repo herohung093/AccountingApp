@@ -1,20 +1,13 @@
 import * as React from "react"
-import { Form, Button } from "react-bootstrap"
-import { useState, useEffect, useContext, useCallback } from "react"
+import { useState, useEffect, useContext } from "react"
 import { Redirect } from "react-router-dom"
 import { withRouter, RouteComponentProps } from "react-router-dom"
 import { LoginContext } from "../../components/Context/LoginContext"
 import axios from "axios"
 import styled from "styled-components"
 import LoginBackground from "../../assess/Login_Background.png"
-interface authType {
-    user: string;
-    password: string;
-}
-const initAuthForm = {
-    user: "",
-    password: ""
-}
+import Login from "../../components/Login"
+
 const Div = styled.div`
 width: 100%;
 margin-Top: 5vh;
@@ -31,7 +24,7 @@ padding-right: 1%;
 }
 `
 const Auth: React.FC<RouteComponentProps> = props => {
-    const [auForms, setAuthForms] = useState<authType>(initAuthForm)
+
     const authContext = useContext(LoginContext)
     const [loginMessage, setLoginMessage] = useState<string>("")
     useEffect(() => {
@@ -41,6 +34,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
             authContext.login();
         }
     })
+
     const kickStartBackendServer = async () => {
         await axios
             .get("https://stormy-ridge-84291.herokuapp.com/customer/")
@@ -50,21 +44,10 @@ const Auth: React.FC<RouteComponentProps> = props => {
             .catch(error => console.log(error))
     };
 
-    const handleAuthFormchange = (e: any) => {
-        let name = e.target.name;
-        let value = e.target.value;
-        setAuthForms({ ...auForms, [name]: value });
-    }
-
-    const handleLogin = (e: any) => {
-        e.preventDefault();
-        sendLoginRequest();
-    }
-
-    const sendLoginRequest = async () => {
+    const sendLoginRequest = async (email: string, password: string) => {
         const authData = {
-            email: auForms.user,
-            password: auForms.password,
+            email: email,
+            password: password,
             returnSecureToken: true
         }
         await axios
@@ -82,39 +65,15 @@ const Auth: React.FC<RouteComponentProps> = props => {
                 // fail actions go here
             }
             )
-
     }
-    return (
 
+    return (
         <div style={{ width: "100%", height: "100vh", backgroundImage: `url(${LoginBackground})` }}>
             <Div>
-                <Form onSubmit={handleLogin}>
-                    <Form.Group controlId="formGroupEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email"
-                            placeholder="Enter email"
-                            required
-                            name="user"
-                            onChange={handleAuthFormchange}
-                            value={auForms.user} />
-                    </Form.Group>
-                    <Form.Group controlId="formGroupPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password"
-                            placeholder="Password"
-                            required
-                            name="password"
-                            onChange={handleAuthFormchange}
-                            value={auForms.password} />
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                        Sign in
-                </Button>
-                    <div>{loginMessage}</div>
-                </Form>
+                <Login handleLogin={sendLoginRequest} />
+                <div>{loginMessage}</div>
                 {authContext.isAuth ? <Redirect to="/" /> : <></>}
             </Div>
-
         </div>
     )
 }
