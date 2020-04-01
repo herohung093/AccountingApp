@@ -19,7 +19,7 @@ const initExpenseInput = {
     note: "",
     amount: 0,
 }
-const category = ["House Renting", "Staff wage", "Accountant", "Decoration", "Other", "Stock"]
+const category = ["House Renting", "Staff wage", "Accountant", "Decoration", "Other", "Stock", "Tax", "Transportation"]
 
 const AddExpense: React.FC<{}> = props => {
     const [expenseInput, setExpenseInput] = useState<expenseInputType>(initExpenseInput);
@@ -29,6 +29,7 @@ const AddExpense: React.FC<{}> = props => {
     const [date, setDate] = useState<Date>(new Date())
     const [expensesData, setExpensesData] = useState<ExpenseType[]>([])
     const [revertOrder, setRevertOrder] = useState<boolean>(false);
+    const [selectedExpense, setSelectedExpense] = useState<ExpenseType | undefined>(undefined)
     useEffect(() => {
         getExpensesData(date)
     }, [])
@@ -53,17 +54,22 @@ const AddExpense: React.FC<{}> = props => {
     const handleProductInputChange = (e: any) => {
         let name = e.target.name;
         let value = e.target.value;
-
         setExpenseInput({ ...expenseInput, [name]: value });
 
     }
     const handleSubmit = (e: any) => {
         e.preventDefault()
+        let dateString = date?.toLocaleDateString();
+        if (dateString.charAt(1) === '/')
+            dateString = "0" + dateString
+        if (dateString.charAt(4) === '/')
+            dateString = dateString.substring(0, 3) + "0" + dateString.substring(3);
+        console.log(dateString)
         const sentData = {
             category: dropdownLable,
             amount: expenseInput.amount,
             note: expenseInput.note,
-            date: date?.toLocaleDateString()
+            date: dateString
         }
         sendNewExpense(sentData)
     }
@@ -85,6 +91,21 @@ const AddExpense: React.FC<{}> = props => {
         processHeaderClick(value, revertOrder, expensesData, setRevertOrder, setExpensesData)
     };
 
+    const handleDeleteExpense = async (id: number) => {
+        if (selectedExpense !== undefined) {
+            //perform delete
+            await axios
+                .delete("https://stormy-ridge-84291.herokuapp.com/expense/" + id)
+                .then(response => {
+                    getExpensesData(date)
+                    console.log("delete success for expense number: " + id)
+                })
+                .catch(error => console.log(error))
+        }
+    }
+    const processSelectedItem = (item: ExpenseType) => {
+        setSelectedExpense(item)
+    }
     return (
         <Row style={{ height: "100vh" }}>
             <Col lg="3" md="4" sm="10" xs="12" style={{ margin: "1%" }}>
@@ -148,8 +169,19 @@ const AddExpense: React.FC<{}> = props => {
 
             </Col>
             <Col lg="6" md="6" sm="12">
+
                 <Alert variant="warning">Expenses for <Badge pill variant="info">{calculateStringMonth(date)}</Badge> </Alert>
-                <Expenses data={expensesData} handleHeaderClick={processInventoryHeaderClick} handleSelectedItem={() => { }} />
+                <Expenses data={expensesData} handleHeaderClick={processInventoryHeaderClick} handleSelectedItem={processSelectedItem} />
+                <Button
+                    style={{}}
+                    variant="danger"
+                    disabled={(selectedExpense === undefined)}
+                    onClick={() => {
+                        if (selectedExpense !== undefined)
+                            handleDeleteExpense(selectedExpense?.id);
+                    }}
+                >Delete Expense</Button>
+
             </Col>
         </Row>
     )

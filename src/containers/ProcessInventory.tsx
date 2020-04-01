@@ -27,12 +27,6 @@ const initInventoryInputs = {
     description: "",
     code: "",
 }
-const initProductQuantity = [{
-    productCode: "",
-    quantity: 0,
-    customer: "",
-    orderId: 0
-}]
 interface InventoryInputType {
     stock: number | string;
     description: string;

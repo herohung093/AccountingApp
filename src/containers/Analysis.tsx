@@ -139,7 +139,7 @@ const Analysis: React.FC<{}> = props => {
                     <Row>
                         <Alert variant="warning" style={{ width: "100%", marginLeft: "1%" }}>
                             <header>
-                                <h2>Total income over Top 5 customers</h2>
+                                <h2>Total income, revenue over Top 5 customers</h2>
                             </header>
                             <ResponsiveContainer width="100%" height={400}>
                                 <LineChart
@@ -163,7 +163,7 @@ const Analysis: React.FC<{}> = props => {
                             </ResponsiveContainer>
                         </Alert>
                     </Row>
-                    <Row>
+                    <Row style={{ marginLeft: "5%" }}>
                         <BestSellers data={bestSellers} startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} ></BestSellers>
                     </Row>
                 </Col>
@@ -180,8 +180,12 @@ const Analysis: React.FC<{}> = props => {
                                         onSelect={date => { setFromDate(date) }}
                                         dateFormat={"dd/MM/yyyy"}
                                         onChange={date => {
-                                            if (date !== null)
+                                            if (date !== null) {
                                                 setFromDate(date)
+                                                getBestSellersData()
+                                                getTopCustomerData()
+                                            }
+
                                         }}
                                     />
                                 </Col>
@@ -191,8 +195,12 @@ const Analysis: React.FC<{}> = props => {
                                         onSelect={date => { setToDate(date) }}
                                         dateFormat={"dd/MM/yyyy"}
                                         onChange={date => {
-                                            if (date !== null)
+                                            if (date !== null) {
                                                 setToDate(date)
+                                                getBestSellersData();
+                                                getTopCustomerData();
+                                            }
+
                                         }} />
                                 </Col>
                             </Row>
@@ -201,8 +209,9 @@ const Analysis: React.FC<{}> = props => {
                     <Row>
                         <CustomerDebt startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} />
                     </Row>
-                    <Row><TopCustomer rawData={topCustomer} startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} headerClick={processTopCustomerHeaderClick} /></Row>
-
+                    <Row>
+                        <TopCustomer rawData={topCustomer} startDate={fromDate.toLocaleDateString()} endDate={toDate.toLocaleDateString()} headerClick={processTopCustomerHeaderClick} />
+                    </Row>
                 </Col>
             </Row>
 

@@ -3,13 +3,13 @@ import OrderType from "../Types/OrderType";
 import OrderDetailType from "../Types/OrderDetailType"
 import CustomerType from "../Types/CustomerType"
 import axios from "axios";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Orders from "../components/Orders";
 import OrderDetail from "../components/OrderDetail"
 import SearchInput from "../components/SearchInput";
 import Suggestions from "../components/Suggestions"
 import styled from "styled-components";
-import { Container, Row, Col, Form, Button, Badge, Alert } from "react-bootstrap"
+import { Row, Col, Form, Button, Badge, Alert } from "react-bootstrap"
 import moneyFormat from "../common/moneyFormat"
 import { Link } from "react-router-dom"
 import DeleteOrder from "../components/Modal/DeleteOrder"

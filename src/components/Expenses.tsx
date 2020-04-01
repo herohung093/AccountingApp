@@ -9,7 +9,7 @@ import { Alert, Badge } from "react-bootstrap"
 interface TableProps {
     data: ExpenseType[];
     handleHeaderClick: (value: string) => void;
-    handleSelectedItem: (value: OrderType) => void;
+    handleSelectedItem: (value: ExpenseType) => void;
 }
 const headers = ["Id", "Category", "Amount", "Date", "Note", "createAt"]
 const Expenses: React.FC<TableProps> = ({ data, handleHeaderClick, handleSelectedItem }) => {
@@ -29,6 +29,7 @@ const Expenses: React.FC<TableProps> = ({ data, handleHeaderClick, handleSelecte
 
                             <tr key={item.id} style={{ background: item.id === selectedItem ? '#00afec' : '', color: item.id === selectedItem ? 'white' : '' }} onClick={() => {
                                 setSelectedItem(item.id)
+                                handleSelectedItem(item)
 
                             }} >
                                 <td >{item.id} </td>
