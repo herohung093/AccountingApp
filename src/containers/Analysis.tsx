@@ -14,6 +14,8 @@ import processHeaderClick from "../common/processHeaderClick"
 interface graphType {
     month: string;
     income: number;
+    expense: number;
+    revenue: number;
     customersTotal: number;
 }
 const currentDate = new Date()
@@ -36,15 +38,25 @@ const Analysis: React.FC<{}> = props => {
 
         const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
         const getLast12MonthDataTask = getLast12MonthData();
+        const getLast12MonthExpenseDataTask = getLast12MonthExpenseData();
         getBestSellersData()
         getTopCustomerData()
         setupMonthLabels()
-        Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask])
+        Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask, getLast12MonthExpenseDataTask])
             .then((data) => {
-
-                prepareDataTotalIncome({ last12MonthData: data[0].data, top5CustomerIncomeData: data[1].data })
+                let revenue = calculateRevenue(data[0].data, data[2].data)
+                prepareDataTotalIncome({ last12MonthData: data[0].data, top5CustomerIncomeData: data[1].data, last12MonthExpenseData: data[2].data, laste12MonthRevenue: revenue })
             })
     }, [])
+
+    const calculateRevenue = (income: number[], expenses: number[]): number[] => {
+        let revenue = new Array()
+        for (let i = 0; i < last12MonthLabels.length; i++) {
+            revenue.push(income[i] - expenses[i])
+        }
+        console.log(revenue)
+        return revenue
+    }
 
     const getLast12MonthData = (): Promise<AxiosResponse<number[]>> => {
         return axios
@@ -55,6 +67,11 @@ const Analysis: React.FC<{}> = props => {
         return axios
             .get("https://stormy-ridge-84291.herokuapp.com/analysis/top5customer/income")
 
+    };
+
+    const getLast12MonthExpenseData = (): Promise<AxiosResponse<number[]>> => {
+        return axios
+            .get("https://stormy-ridge-84291.herokuapp.com/expense/time")
     };
 
     const setupMonthLabels = () => {
@@ -79,12 +96,12 @@ const Analysis: React.FC<{}> = props => {
         }
 
     }
-    const prepareDataTotalIncome = (params: { last12MonthData: number[], top5CustomerIncomeData: number[] }) => {
-        const { last12MonthData, top5CustomerIncomeData } = params;
+    const prepareDataTotalIncome = (params: { last12MonthData: number[], top5CustomerIncomeData: number[], last12MonthExpenseData: number[], laste12MonthRevenue: number[] }) => {
+        const { last12MonthData, last12MonthExpenseData, top5CustomerIncomeData, laste12MonthRevenue } = params;
         let buff = [...last12Month]
         for (let i = 0; i <= 12 + currentDate.getMonth(); i++) {
-            if (last12MonthData[0] !== undefined && top5CustomerIncomeData[0] !== undefined)
-                buff.push({ month: last12MonthLabels[i], income: last12MonthData[i], customersTotal: top5CustomerIncomeData[i] })
+            if (last12MonthData[0] !== undefined && top5CustomerIncomeData[0] !== undefined && last12MonthExpenseData[0] !== undefined)
+                buff.push({ month: last12MonthLabels[i], income: last12MonthData[i], expense: last12MonthExpenseData[i], revenue: laste12MonthRevenue[i], customersTotal: top5CustomerIncomeData[i] })
         }
         setLast12Month(buff)
     }
@@ -139,7 +156,9 @@ const Analysis: React.FC<{}> = props => {
                                     }} />
                                     <Legend />
                                     <Line type="monotone" dataKey="income" stroke="#8884d8" fontWeight="bold" />
-                                    <Line type="monotone" dataKey="customersTotal" stroke="#d89f84" />
+                                    <Line type="monotone" dataKey="expense" stroke="#c92ade" fontWeight="bold" />
+                                    <Line type="monotone" dataKey="revenue" stroke="#eb4034" fontWeight="bold" />
+                                    <Line type="monotone" dataKey="customersTotal" stroke="#d89f84" fontWeight="bold" />
                                 </LineChart>
                             </ResponsiveContainer>
                         </Alert>

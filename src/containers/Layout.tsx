@@ -11,6 +11,7 @@ import Customers from "./Customers"
 import Analysis from "./Analysis"
 import Auth from "../containers/Auth/Auth"
 import { LoginContext } from "../components/Context/LoginContext"
+import AddExpense from "./AddExpense"
 const Layout: React.FC<{}> = props => {
 
     const authContext = React.useContext(LoginContext).isAuth
@@ -30,6 +31,7 @@ const Layout: React.FC<{}> = props => {
         <Route path="/customers" exact component={Customers}></Route>
         <Route path="/updatecustomer/:name" exact component={CreateCustomer}></Route>
         <Route path="/auth" exact component={Auth}></Route>
+        <Route path="/addexpense" exact component={AddExpense}></Route>
         <Route path="/logout" exact component={Auth}></Route>
     </div>);
 }
