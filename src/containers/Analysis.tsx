@@ -39,8 +39,8 @@ const Analysis: React.FC<{}> = props => {
         const getTop5customerIncomeDataTask = getTop5CustomerIncomeData();
         const getLast12MonthDataTask = getLast12MonthData();
         const getLast12MonthExpenseDataTask = getLast12MonthExpenseData();
-        getBestSellersData()
-        getTopCustomerData()
+        getBestSellersData(fromDate, toDate)
+        getTopCustomerData(fromDate, toDate)
         setupMonthLabels()
         Promise.all<AxiosResponse<number[]>, AxiosResponse<number[]>, AxiosResponse<number[]>>([getLast12MonthDataTask, getTop5customerIncomeDataTask, getLast12MonthExpenseDataTask])
             .then((data) => {
@@ -54,7 +54,6 @@ const Analysis: React.FC<{}> = props => {
         for (let i = 0; i < last12MonthLabels.length; i++) {
             revenue.push(income[i] - expenses[i])
         }
-        console.log(revenue)
         return revenue
     }
 
@@ -105,7 +104,7 @@ const Analysis: React.FC<{}> = props => {
         }
         setLast12Month(buff)
     }
-    const getBestSellersData = async () => {
+    const getBestSellersData = async (fromDate: Date, toDate: Date) => {
         let to = toDate?.toLocaleDateString();
         let from = fromDate?.toLocaleDateString();
 
@@ -117,7 +116,7 @@ const Analysis: React.FC<{}> = props => {
             .catch(error => console.log(error))
     }
 
-    const getTopCustomerData = async () => {
+    const getTopCustomerData = async (fromDate: Date, toDate: Date) => {
         let to = toDate?.toLocaleDateString();
         let from = fromDate?.toLocaleDateString();
 
@@ -182,8 +181,8 @@ const Analysis: React.FC<{}> = props => {
                                         onChange={date => {
                                             if (date !== null) {
                                                 setFromDate(date)
-                                                getBestSellersData()
-                                                getTopCustomerData()
+                                                getBestSellersData(date, toDate)
+                                                getTopCustomerData(date, toDate)
                                             }
 
                                         }}
@@ -197,8 +196,8 @@ const Analysis: React.FC<{}> = props => {
                                         onChange={date => {
                                             if (date !== null) {
                                                 setToDate(date)
-                                                getBestSellersData();
-                                                getTopCustomerData();
+                                                getBestSellersData(fromDate, date);
+                                                getTopCustomerData(fromDate, date);
                                             }
 
                                         }} />
