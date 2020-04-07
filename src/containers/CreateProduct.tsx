@@ -3,6 +3,8 @@ import axios from "axios"
 import { Col, Button, Form } from "react-bootstrap"
 import { useState } from "react"
 import MessageModal from "../components/Modal/MessageModal"
+import baseUrl from "../common/baseUrl"
+
 interface productInPutType {
     code: string;
     name: string;
@@ -50,7 +52,7 @@ const CreateProduct: React.FC<{}> = props => {
 
     const sendCreateProduct = async (productInput: any) => {
         await axios
-            .post("https://stormy-ridge-84291.herokuapp.com/products/", productInput)
+            .post(baseUrl.base + "products/", productInput)
             .then(response => {
                 setShowMessageModal(true)
                 setModalMessage(response.data)

@@ -15,6 +15,8 @@ import { Link } from "react-router-dom"
 import processHeaderClick from "../common/processHeaderClick"
 import TotalProduct from "../components/TotalProduct"
 import convertTotalProductData from "../common/convertTotalProductData"
+import baseUrl from "../common/baseUrl"
+
 let initCustomer = [{
     id: 0,
     name: "",
@@ -45,7 +47,7 @@ const Customers: React.FC<{}> = props => {
     useEffect(() => {
         const getData = async () => {
             await axios
-                .get("https://stormy-ridge-84291.herokuapp.com/customer/")
+                .get(baseUrl.base + "customer/")
                 .then(response => {
                     setCustomers(response.data);
                     initCustomer.length = 0;
@@ -65,7 +67,7 @@ const Customers: React.FC<{}> = props => {
         setCustomerSoldLoading(true)
         await axios
             // eslint-disable-next-line no-useless-concat
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "customersold?id=" + id + "&startDate=" + from + "&endDate=" + to)
+            .get(baseUrl.base + "analysis/" + "customersold?id=" + id + "&startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setCustomerSoldData(response.data)
                 setCustomerSoldLoading(false)
@@ -78,7 +80,7 @@ const Customers: React.FC<{}> = props => {
 
         await axios
             // eslint-disable-next-line no-useless-concat
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/" + "dept/" + id)
+            .get(baseUrl.base + "analysis/" + "dept/" + id)
             .then(response => {
                 setCustomerDebt(response.data)
             })

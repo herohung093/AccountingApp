@@ -4,6 +4,7 @@ import { Col, Button, Form } from "react-bootstrap"
 import { useState, useEffect } from "react"
 import MessageModal from "../components/Modal/MessageModal"
 import { withRouter, RouteComponentProps } from "react-router-dom"
+import baseUrl from "../common/baseUrl"
 const initCustomer = {
     name: "",
     phone: "",
@@ -49,7 +50,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
 
     const getCustomer = async (name: string) => {
         await axios
-            .get<CustomerResponseType>("https://stormy-ridge-84291.herokuapp.com/customer/" + name)
+            .get<CustomerResponseType>(baseUrl.base + "customer/" + name)
             .then(response => {
 
                 setUpdateCustomer(response.data);
@@ -74,7 +75,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
             }
             console.log(sentData)
             await axios
-                .put("https://stormy-ridge-84291.herokuapp.com/customer/", sentData)
+                .put(baseUrl.base + "customer/", sentData)
                 .then(response => {
                     setShowMessageModal(true)
                     setModalMessage(response.data.toString())
@@ -111,7 +112,7 @@ const CreateCustomer: React.FC<RouteComponentProps> = props => {
 
     const sendNewCustomer = async (customer: CustomerType) => {
         await axios
-            .post("https://stormy-ridge-84291.herokuapp.com/customer/", customer)
+            .post(baseUrl.base + "customer/", customer)
             .then(response => {
                 setShowMessageModal(true)
                 setModalMessage(response.data)

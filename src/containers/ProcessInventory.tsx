@@ -12,6 +12,8 @@ import convertTotalProductData from "../common/convertTotalProductData"
 import ProductQuantity from "../components/ProductQuantity"
 import DatePicker from "react-datepicker";
 import ProductQuantityType from "../Types/ProductQuantityType"
+import baseUrl from "../common/baseUrl"
+
 let initIventory = [{
     code: "",
     stock: 0,
@@ -54,7 +56,7 @@ const ProcessInventory: React.FC<{}> = props => {
     }, []);
     const loadInventoryData = async () => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/inventory/")
+            .get(baseUrl.base + "inventory/")
             .then(response => {
                 setInventory(response.data);
                 initIventory.length = 0;
@@ -141,7 +143,7 @@ const ProcessInventory: React.FC<{}> = props => {
     }
     const sendIncreaseStock = async (productInput: any) => {
         await axios
-            .put("https://stormy-ridge-84291.herokuapp.com/productinput/increase", productInput)
+            .put(baseUrl.base + "productinput/increase", productInput)
             .then(response => {
                 if (response.status === 200) {
                     console.log(response.data)
@@ -180,7 +182,7 @@ const ProcessInventory: React.FC<{}> = props => {
     }
     const sendSetStock = async (productInput: any) => {
         await axios
-            .put("https://stormy-ridge-84291.herokuapp.com/productinput/", productInput)
+            .put(baseUrl.base + "productinput/", productInput)
             .then(response => {
                 if (response.status === 200) {
                     console.log(response.data)
@@ -203,7 +205,7 @@ const ProcessInventory: React.FC<{}> = props => {
         let from = fromDate?.toLocaleDateString();
 
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/soldproduct/" + product + "?startDate=" + from + "&endDate=" + to)
+            .get(baseUrl.base + "analysis/soldproduct/" + product + "?startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setProductQuantity(response.data)
             })

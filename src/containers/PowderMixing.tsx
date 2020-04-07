@@ -7,6 +7,8 @@ import Inventory from "../components/Inventory"
 import { useState, useEffect } from "react"
 import InventoryType from "../Types/InventoryType"
 import processHeaderClick from "../common/processHeaderClick"
+import baseUrl from "../common/baseUrl"
+
 interface PowderType {
     NN1: number;
     NN2S: number;
@@ -83,7 +85,7 @@ const PowderMixing: React.FC<{}> = props => {
     }, []);
     const loadInventoryData = async () => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/inventory/")
+            .get(baseUrl.base + "inventory/")
             .then(response => {
                 setInventory(response.data);
                 initIventory.length = 0;
@@ -302,7 +304,7 @@ const PowderMixing: React.FC<{}> = props => {
     }
     const sendIncreaseStock = async (productInput: any) => {
         await axios
-            .put("https://stormy-ridge-84291.herokuapp.com/productinput/increase", productInput)
+            .put(baseUrl.base + "productinput/increase", productInput)
             .then(response => {
                 setShowMessageModal(true)
                 setModalMessage(response.data.toString())
@@ -315,7 +317,7 @@ const PowderMixing: React.FC<{}> = props => {
     };
     const sendDecreaseStock = async (productInput: any) => {
         await axios
-            .put("https://stormy-ridge-84291.herokuapp.com/productinput/decrease", productInput)
+            .put(baseUrl.base + "productinput/decrease", productInput)
             .then(response => {
                 if (response.status === 200) {
                     console.log(response.data)

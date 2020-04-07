@@ -8,6 +8,8 @@ import styled from "styled-components"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import processHeaderClick from "../common/processHeaderClick"
+import baseUrl from "../common/baseUrl"
+
 const StyledOrders = styled.div<{ isLoading: boolean }>`
     position: ${props => props.isLoading && 'absolute'};
     left: ${props => props.isLoading && '50%'};
@@ -109,7 +111,7 @@ const InventoryHistory: React.FC<{}> = props => {
     const loadInventoryHistoryData = async (from: string, to: string) => {
 
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/productinput/date/between?startDate=" + from + "&endDate=" + to)
+            .get(baseUrl.base + "productinput/date/between?startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setData(response.data);
                 initIventory.length = 0;

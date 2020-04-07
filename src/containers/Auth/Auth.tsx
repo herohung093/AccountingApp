@@ -7,7 +7,7 @@ import axios from "axios"
 import styled from "styled-components"
 import LoginBackground from "../../assess/Login_Background.png"
 import Login from "../../components/Login"
-
+import baseUrl from "../../common/baseUrl"
 const Div = styled.div`
 width: 100%;
 margin-Top: 5vh;
@@ -37,7 +37,7 @@ const Auth: React.FC<RouteComponentProps> = props => {
 
     const kickStartBackendServer = async () => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/customer/")
+            .get(baseUrl.base + "customer/")
             .then(response => {
                 console.log("Backend server started")
             })

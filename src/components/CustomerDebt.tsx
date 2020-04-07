@@ -6,6 +6,7 @@ import TableHeader from "./TableHeader"
 import moneyFormat from "../common/moneyFormat"
 import { useState, useEffect } from "react"
 import CustomerDebtType from "../Types/CustomerDebtType"
+import baseUrl from "../common/baseUrl"
 interface TableProps {
     startDate: string;
     endDate: string;
@@ -25,7 +26,7 @@ const CustomerDebt: React.FC<TableProps> = ({ startDate, endDate }) => {
     const getData = async () => {
 
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/dept?startDate=" + startDate + "&endDate=" + endDate)
+            .get(baseUrl.base + "analysis/dept?startDate=" + startDate + "&endDate=" + endDate)
             .then(response => {
                 setData(response.data)
             })

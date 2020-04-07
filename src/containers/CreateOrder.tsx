@@ -20,6 +20,8 @@ import MessageModal from "../components/Modal/MessageModal"
 import { cloneDeep } from "lodash"
 import TotalProduct from "../components/TotalProduct"
 import convertTotalProductData from "../common/convertTotalProductData"
+import baseUrl from "../common/baseUrl"
+
 let initCustomer = [{
     id: 0,
     name: "",
@@ -112,7 +114,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
 
         const getCustomerData = async () => {
             await axios
-                .get("https://stormy-ridge-84291.herokuapp.com/customer/")
+                .get(baseUrl.base + "customer/")
                 .then(response => {
                     setCustomers(response.data);
                     initCustomer.length = 0;
@@ -126,7 +128,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     }, []);
     const loadInventoryData = async () => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/inventory/")
+            .get(baseUrl.base + "inventory/")
             .then(response => {
                 setInventory(response.data);
                 initIventory.length = 0;
@@ -138,7 +140,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     const getUpdateOrderDetai = (id: number) => {
         const getOrder = async () => {
             await axios
-                .get<OrderType>("https://stormy-ridge-84291.herokuapp.com/order/" + id)
+                .get<OrderType>(baseUrl.base + "order/" + id)
                 .then(response => {
                     setUpdateOrder(response.data);
                     initOrderNote.paid = response.data.paid
@@ -150,7 +152,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
 
         const getOrderDetail = async () => {
             await axios
-                .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + id + "/items")
+                .get<OrderDetailType[]>(baseUrl.base + "order/" + id + "/items")
                 .then(response => {
                     setOrderItems([...response.data, initOrderLine[0]]);
                     // initOrderLine.length = 0;

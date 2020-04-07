@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import ExpenseType from "../Types/ExpenseType"
 import Expenses from "../components/Expenses"
 import processHeaderClick from "../common/processHeaderClick"
+import baseUrl from "../common/baseUrl"
 interface expenseInputType {
     category: string;
     date: string;
@@ -19,7 +20,7 @@ const initExpenseInput = {
     note: "",
     amount: 0,
 }
-const category = ["House Renting", "Staff wage", "Accountant", "Decoration", "Other", "Stock", "Tax", "Transportation"]
+const category = ["House Renting", "Staff wage", "Accountant", "Decoration", "Other", "Stock", "Tax", "Transportation"].sort()
 
 const AddExpense: React.FC<{}> = props => {
     const [expenseInput, setExpenseInput] = useState<expenseInputType>(initExpenseInput);
@@ -42,7 +43,7 @@ const AddExpense: React.FC<{}> = props => {
     }
     const getExpensesData = async (newDate: Date) => {
 
-        await axios.get("https://stormy-ridge-84291.herokuapp.com/expense/month?month=" + calculateStringMonth(newDate))
+        await axios.get(baseUrl.base + "expense/month?month=" + calculateStringMonth(newDate))
             .then(response => {
                 console.log(response.data)
                 setExpensesData(response.data)
@@ -75,7 +76,7 @@ const AddExpense: React.FC<{}> = props => {
     }
     const sendNewExpense = async (expense: expenseInputType) => {
         await axios
-            .post("https://stormy-ridge-84291.herokuapp.com/expense/", expense)
+            .post(baseUrl.base + "expense/", expense)
             .then(response => {
                 setShowMessageModal(true)
                 setModalMessage("Success")
@@ -95,7 +96,7 @@ const AddExpense: React.FC<{}> = props => {
         if (selectedExpense !== undefined) {
             //perform delete
             await axios
-                .delete("https://stormy-ridge-84291.herokuapp.com/expense/" + id)
+                .delete(baseUrl.base + "expense/" + id)
                 .then(response => {
                     getExpensesData(date)
                     console.log("delete success for expense number: " + id)

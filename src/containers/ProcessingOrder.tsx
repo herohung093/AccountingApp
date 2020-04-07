@@ -18,6 +18,8 @@ import { withRouter } from "react-router-dom"
 import processHeaderClick from "../common/processHeaderClick"
 import TotalProduct from "../components/TotalProduct"
 import convertTotalProductData from "../common/convertTotalProductData"
+import baseUrl from "../common/baseUrl"
+
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -63,7 +65,7 @@ const ProcessOrder: React.FC<{}> = props => {
 
     const getOrdersData = async () => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/order/")
+            .get(baseUrl.base + "order/")
             .then(response => {
                 setOrders(response.data);
                 setOrderLoading(false);
@@ -75,7 +77,7 @@ const ProcessOrder: React.FC<{}> = props => {
 
         const getCustomers = async () => {
             await axios
-                .get<CustomerType[]>("https://stormy-ridge-84291.herokuapp.com/customer/all/?namePatten=" + value)
+                .get<CustomerType[]>(baseUrl.base + "customer/all/?namePatten=" + value)
                 .then(response => {
                     setSearchResults(response.data)
                 })
@@ -101,7 +103,7 @@ const ProcessOrder: React.FC<{}> = props => {
         setSelectedOrder(item)
         const getOrderDetail = async () => {
             await axios
-                .get<OrderDetailType[]>("https://stormy-ridge-84291.herokuapp.com/order/" + item.id.toString() + "/items")
+                .get<OrderDetailType[]>(baseUrl.base + "order/" + item.id.toString() + "/items")
                 .then(response => {
                     setOrderDetail(response.data);
 
@@ -135,7 +137,7 @@ const ProcessOrder: React.FC<{}> = props => {
             let amount = 0;
             const totalPrice = calculateTotalPrice()
             const payForOrder = async () => {
-                await axios.put("https://stormy-ridge-84291.herokuapp.com/order/amount/?id=" + selectedOrder.id + "&amount=" + amount)
+                await axios.put(baseUrl.base + "order/amount/?id=" + selectedOrder.id + "&amount=" + amount)
                     .then(response => {
                         processSuggestionSelect(selectedCustomer);
                         console.log(response.data)
@@ -178,7 +180,7 @@ const ProcessOrder: React.FC<{}> = props => {
     }
     const getCustomerOrdersData = async (id: number) => {
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/order/customer/" + id)
+            .get(baseUrl.base + "order/customer/" + id)
             .then(response => {
                 setOrders(response.data);
                 setOrderLoading(false);
@@ -198,7 +200,7 @@ const ProcessOrder: React.FC<{}> = props => {
         if (selectedOrder !== undefined) {
             const deleteOrder = async () => {
                 await axios
-                    .delete("https://stormy-ridge-84291.herokuapp.com/order/" + selectedOrder.id)
+                    .delete(baseUrl.base + "order/" + selectedOrder.id)
                     .then(response => {
                         console.log(response.data)
                         setShowModal(false);

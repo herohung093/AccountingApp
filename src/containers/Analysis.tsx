@@ -11,6 +11,7 @@ import moneyFormat from "../common/moneyFormat";
 import TopCustomerType from "../Types/TopCustomerType";
 import TopCustomer from "../components/TopCustomer";
 import processHeaderClick from "../common/processHeaderClick"
+import baseUrl from "../common/baseUrl"
 interface graphType {
     month: string;
     income: number;
@@ -59,18 +60,18 @@ const Analysis: React.FC<{}> = props => {
 
     const getLast12MonthData = (): Promise<AxiosResponse<number[]>> => {
         return axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/income/time")
+            .get(baseUrl.base + "analysis/income/time")
     };
 
     const getTop5CustomerIncomeData = (): Promise<AxiosResponse<number[]>> => {
         return axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/top5customer/income")
+            .get(baseUrl.base + "analysis/top5customer/income")
 
     };
 
     const getLast12MonthExpenseData = (): Promise<AxiosResponse<number[]>> => {
         return axios
-            .get("https://stormy-ridge-84291.herokuapp.com/expense/time")
+            .get(baseUrl.base + "expense/time")
     };
 
     const setupMonthLabels = () => {
@@ -109,7 +110,7 @@ const Analysis: React.FC<{}> = props => {
         let from = fromDate?.toLocaleDateString();
 
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/bestseller?startDate=" + from + "&endDate=" + to)
+            .get(baseUrl.base + "analysis/bestseller?startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setBestSellers(response.data)
             })
@@ -121,7 +122,7 @@ const Analysis: React.FC<{}> = props => {
         let from = fromDate?.toLocaleDateString();
 
         await axios
-            .get("https://stormy-ridge-84291.herokuapp.com/analysis/topcustomer?startDate=" + from + "&endDate=" + to)
+            .get(baseUrl.base + "analysis/topcustomer?startDate=" + from + "&endDate=" + to)
             .then(response => {
                 setTopCustomer(response.data)
             })
