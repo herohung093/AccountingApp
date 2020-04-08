@@ -82,7 +82,7 @@ const ProcessInventory: React.FC<{}> = props => {
                 } else if (valueArr.length === 2) {
                     if (itemArr.length === 1)
                         if (itemArr[0] === valueArr[0]) return item
-                    if (itemArr[0].includes(valueArr[0]) && itemArr[1].includes(valueArr[1])) {
+                    if (itemArr[0].toString() === (valueArr[0]) && itemArr[1].includes(valueArr[1])) {
                         return item;
                     }
                 } else if (valueArr.length === 3) {
