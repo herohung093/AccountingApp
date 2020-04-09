@@ -34,13 +34,18 @@ const ConfirmOrder: React.FC<modalProps> = ({ handleClose, show, data }) => {
                         <h6>Total Paid: {moneyFormat(data.paid.toString())}</h6></Alert>
                 </div>
                 <Modal.Body>
-                    <OrderDetail data={data.orderLines as Data} loading={false} headers={headers} handleSelectedItem={() => { }} handleHeaderClick={() => { }} />
-
+                    <OrderDetail
+                        data={data.orderLines as Data}
+                        loading={false} headers={headers}
+                        handleSelectedItem={() => { }}
+                        handleHeaderClick={() => { }} />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button
+                        variant="secondary"
+                        onClick={handleClose}>
                         Close
-          </Button>
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </Div>

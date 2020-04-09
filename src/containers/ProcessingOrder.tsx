@@ -19,7 +19,8 @@ import processHeaderClick from "../common/processHeaderClick"
 import TotalProduct from "../components/TotalProduct"
 import convertTotalProductData from "../common/convertTotalProductData"
 import baseUrl from "../common/baseUrl"
-
+import PdfExportModal from "../components/Modal/PdfExportModal";
+import download from 'downloadjs'
 const OrderList = styled.div`
   width:100%;
   max-height: 90vh;
@@ -45,7 +46,7 @@ let initOrderDetail = [{
 }];
 const orderHeaders = ["Id", "Customer", "Create At", "Paid", "Note"];
 const orderDetailheaders = ["Product", "Quantity", "Price", "Discount", "Total Price"];
-
+const currentDate = new Date()
 let selectedCustomer: CustomerType;
 const ProcessOrder: React.FC<{}> = props => {
     const formRef = React.useRef<HTMLInputElement>()
@@ -62,7 +63,7 @@ const ProcessOrder: React.FC<{}> = props => {
     const [showMessageModal, setShowMessageModal] = useState<boolean>(false)
     const [modalMessage, setMessageModal] = useState<string>("");
     const [modalMessageTitle, setMessageModalTitle] = useState<string>("");
-
+    const [showExportPdfModal, setShowExportPdfModal] = useState<boolean>(false)
     const getOrdersData = async () => {
         await axios
             .get(baseUrl.base + "order/")
@@ -216,6 +217,67 @@ const ProcessOrder: React.FC<{}> = props => {
             deleteOrder();
         }
     }
+    const processDeleteFromInvoiceList = (order: OrderType) => {
+        setMonthlyInvoice(monthlyInvoice.filter(item => {
+            return item.id !== order.id
+        }))
+    }
+
+    const handlePrintOrder = (monthValue: string) => {
+        if (monthlyInvoice.length === 1)
+            handlePrintForOneOrder();
+        else {
+            handlePrintOrders(monthValue);
+        }
+    }
+    const handlePrintForOneOrder = async () => {
+
+        await axios(baseUrl.base + "pdf/" + monthlyInvoice[0].id, {
+            method: 'GET',
+            responseType: 'blob' //Force to receive data in a Blob Format
+        }).then(response => {
+            //Create a Blob from the PDF Stream
+            const file = new Blob(
+                [response.data],
+                { type: 'application/pdf' });
+            //Open the URL on new Window
+            const fileName = monthlyInvoice[0].id + " " + monthlyInvoice[0].createAt
+            window.open(URL.createObjectURL(download(file, fileName)))
+            //window.open(fileURL);
+
+        })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    const handlePrintOrders = async (monthValue: string) => {
+        const payLoad = {
+            orders: monthlyInvoice,
+            date: monthValue
+        }
+        await axios(baseUrl.base + "pdf/", {
+            method: 'POST',
+            responseType: 'blob', //Force to receive data in a Blob Format
+            data: payLoad
+        }).then(response => {
+            //Create a Blob from the PDF Stream
+            const file = new Blob(
+                [response.data],
+                { type: 'application/pdf' });
+
+            //Open the URL on new Window
+            const fileName = monthValue + " " + currentDate.toLocaleDateString()
+            window.open(URL.createObjectURL(download(file, fileName)))
+            //window.open(fileURL);
+
+        })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+
     return (
         <div>
             <div style={{ margin: "0px", width: "100%" }}>
@@ -248,7 +310,13 @@ const ProcessOrder: React.FC<{}> = props => {
                                     message={modalMessage}
                                     handleClose={() => { setShowMessageModal(false) }}
                                     show={showMessageModal} />
-
+                                <PdfExportModal
+                                    data={monthlyInvoice}
+                                    show={showExportPdfModal}
+                                    handleClose={() => { setShowExportPdfModal(false) }}
+                                    handlePrint={handlePrintOrder}
+                                    handleDelete={processDeleteFromInvoiceList}
+                                />
                             </div>
                             <Orders
                                 data={orders}
@@ -261,9 +329,10 @@ const ProcessOrder: React.FC<{}> = props => {
                             <Row>
                                 <Col lg="7">
                                     <Button style={{ marginLeft: "5px", marginTop: "10px", width: "80%" }}
-                                        disabled={(selectedOrder === undefined)}
-                                        onClick={() => { }}>Monthly Invoice List
-                                <Badge pill variant="warning"
+                                        disabled={(monthlyInvoice.length === 0)}
+                                        onClick={() => { setShowExportPdfModal(true) }}>Monthly Invoice List
+                                        <Badge
+                                            pill variant="warning"
                                             style={{ marginLeft: "5px" }}>
                                             {monthlyInvoice.length}
                                         </Badge>
