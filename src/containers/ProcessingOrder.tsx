@@ -316,6 +316,7 @@ const ProcessOrder: React.FC<{}> = props => {
                                     handleClose={() => { setShowExportPdfModal(false) }}
                                     handlePrint={handlePrintOrder}
                                     handleDelete={processDeleteFromInvoiceList}
+                                    handleClearList={() => { setMonthlyInvoice([]) }}
                                 />
                             </div>
                             <Orders
@@ -337,7 +338,9 @@ const ProcessOrder: React.FC<{}> = props => {
                                             {monthlyInvoice.length}
                                         </Badge>
                                     </Button>
+
                                 </Col>
+
                                 <Col lg="auto">
                                     <Link to={"/updateorder/" + selectedOrder?.id} >
                                         <Button

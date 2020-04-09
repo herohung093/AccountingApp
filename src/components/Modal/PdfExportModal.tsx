@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Modal, Button, Form } from "react-bootstrap"
+import { Modal, Button, Form, Row } from "react-bootstrap"
 import styled from "styled-components"
 import OrderType from "../../Types/OrderType"
 import Orders from "../../components/Orders"
@@ -7,6 +7,7 @@ interface modalProps {
     handleClose: () => void;
     handlePrint: (month: string) => void;
     handleDelete: (order: OrderType) => void;
+    handleClearList: () => void;
     show: boolean;
     data: OrderType[]
 }
@@ -20,7 +21,13 @@ const Div = styled.div`
 
 const orderHeaders = ["Id", "Customer", "Create At", "Paid", "Note"];
 
-const PdfExportModal: React.FC<modalProps> = ({ handleClose, handlePrint, handleDelete, show, data }) => {
+const buttonStyle = {
+    marginLeft: "1%",
+    marginRight: "1%",
+    width: "30%"
+}
+
+const PdfExportModal: React.FC<modalProps> = ({ handleClose, handlePrint, handleDelete, handleClearList, show, data }) => {
     const [selectedItem, setSelectedItem] = React.useState<OrderType | null>(null);
     const [monthValue, setMonthValue] = React.useState<string>("");
     const handleFormChange = (e: any) => {
@@ -55,16 +62,27 @@ const PdfExportModal: React.FC<modalProps> = ({ handleClose, handlePrint, handle
                 ></Orders>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Close</Button>
-                <Button variant="danger"
-                    disabled={(selectedItem === null || data.length === 0) ? true : false}
-                    onClick={() => {
-                        if (selectedItem !== null)
-                            handleDelete(selectedItem)
-                    }}>Delete Selected Order</Button>
-                <Button variant="success"
-                    disabled={data.length === 0 ? true : false}
-                    onClick={() => { handlePrint(monthValue) }}>Export To Pdf</Button>
+                <Row style={{ width: "100%" }}>
+                    <Button variant="success"
+                        disabled={data.length === 0 ? true : false}
+                        onClick={() => { handlePrint(monthValue) }}
+                        style={{ width: "100%" }}
+                    >Export To Pdf</Button>
+                </Row>
+
+                <Row style={{ width: "100%" }}>
+                    <Button variant="secondary" onClick={handleClose} style={buttonStyle}>Close</Button>
+                    <Button variant="warning" style={buttonStyle} onClick={handleClearList} disabled={data.length === 0 ? true : false}>Clear List</Button>
+                    <Button variant="danger"
+                        disabled={(selectedItem === null || data.length === 0) ? true : false}
+                        style={buttonStyle}
+                        onClick={() => {
+                            if (selectedItem !== null)
+                                handleDelete(selectedItem)
+                        }}>Remove Order</Button>
+                </Row>
+
+
             </Modal.Footer>
         </Modal>
     </Div>)
