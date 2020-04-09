@@ -303,6 +303,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
                 quantity: Number(item.quantity),
                 price: Number(item.price),
                 discount: Number(item.discount),
+                totalPrice: (Number(item.price) * Number(item.quantity)) * (100 - Number(item.discount)) / 100,
                 id: ++orderLineId
 
             }
@@ -326,7 +327,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     }
     const sendNewOrderData = async (order: any) => {
         await axios
-            .post("https://stormy-ridge-84291.herokuapp.com/order/", order)
+            .post(baseUrl.base + "order/", order)
             .then(response => {
                 if (response.status === 200) {
                     setConfirmOrderData(response.data)
@@ -340,7 +341,7 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     };
     const sendUpdateOrderData = async (order: any) => {
         await axios
-            .put("https://stormy-ridge-84291.herokuapp.com/order/", order)
+            .put(baseUrl.base + "order/", order)
             .then(response => {
                 if (response.status === 200) {
                     setConfirmOrderData(response.data)
@@ -365,6 +366,8 @@ const CreateOrder: React.FC<RouteComponentProps> = props => {
     }
     const handleCloseCondfirmModal = () => {
         setShowConfirmOrder(false);
+        initOrderNote.note = ""
+        initOrderNote.paid = 0;
         setOrderNoteInputs(initOrderNote)
         setSelectedInventoryItem(undefined)
         setOrderItems(initOrderLine)

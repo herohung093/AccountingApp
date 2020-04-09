@@ -1,9 +1,6 @@
 import * as React from "react"
-import { Modal, Button, Alert, Form } from "react-bootstrap"
+import { Modal, Button, Form } from "react-bootstrap"
 import styled from "styled-components"
-import ConfirmOrderType from "../../Types/ConfirmOrderType"
-import moneyFormat from "../../common/moneyFormat"
-import OrderDetail, { Data } from "../OrderDetail"
 import OrderType from "../../Types/OrderType"
 import Orders from "../../components/Orders"
 interface modalProps {
