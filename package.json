@@ -19,7 +19,7 @@
     "@types/vis": "^4.21.19",
     "aws-amplify": "^2.2.7",
     "aws-amplify-react": "^3.1.8",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "downloadjs": "^1.4.7",
     "js-file-download": "^0.4.11",
